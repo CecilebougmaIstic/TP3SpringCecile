@@ -9,17 +9,19 @@
      <!--  <class>org.hibernate.ejb.test.Distributor</class> -->
      <!--  <class>org.hibernate.ejb.test.Item</class> -->
       <properties> 
+                  <property name="hibernate.show_sql" value="true"/>
+      
          <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
-                        <property name="hibernate.show_sql" value="true"/>
-            
+																		  
+			
          <property name="hibernate.connection.driver_class" value="org.hsqldb.jdbcDriver"/>
          <property name="hibernate.connection.username" value="sa"/>
          <property name="hibernate.connection.password" value=""/>
          <property name="hibernate.connection.url" value="jdbc:hsqldb:hsql://localhost/"/>
       </properties>
    </persistence-unit>
-<persistence-unit name="prod" transaction-type="RESOURCE_LOCAL">
+<persistence-unit name="dev" transaction-type="RESOURCE_LOCAL">
      <!-- <class>org.hibernate.ejb.test.Cat</class> -->
      <!--  <class>org.hibernate.ejb.test.Distributor</class> -->
      <!--  <class>org.hibernate.ejb.test.Item</class> -->
@@ -52,11 +54,11 @@
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.archive.autodetection" value="class, hbm"/>
             <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-            <property name="hibernate.connection.password" value=""/>
-            <property name="hibernate.connection.url" value="jdbc:mysql://localhost/demosir?useUnicode=yes&amp;characterEncoding=UTF-8"/>
+            <property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="hibernate.connection.password" value="my-secret-pw"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost/doctolibService"/>
             <property name="hibernate.connection.username" value="root"/>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
             <property name="hibernate.c3p0.min_size" value="5"/>
             <property name="hibernate.c3p0.max_size" value="20"/>
             <property name="hibernate.c3p0.timeout" value="300"/>
