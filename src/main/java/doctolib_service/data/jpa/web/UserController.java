@@ -23,6 +23,7 @@ import doctolib_service.data.jpa.service.UserDao;
 @RestController
 @RequestMapping("/api")
 public class UserController {
+	
 	@Autowired
 	private UserDao userDao;
 	
