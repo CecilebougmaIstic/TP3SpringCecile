@@ -16,7 +16,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 //.apis(RequestHandlerSelectors.any())
-                .apis(RequestHandlerSelectors.basePackage("import doctolib_service.data.jpa.web"))
+                .apis(RequestHandlerSelectors.basePackage("doctolib_service.data.jpa.web"))
                 .paths(PathSelectors.any())
                 .build();
     }
