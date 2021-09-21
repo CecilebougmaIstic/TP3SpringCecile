@@ -1,91 +1,118 @@
-package sample.data.jpa.web;
+package doctolib_service.data.jpa.web;
+
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+import doctolib_service.data.jpa.domain.User;
+import doctolib_service.data.jpa.service.UserDao;
 
-import sample.data.jpa.domain.User;
-import sample.data.jpa.service.UserDao;
-
-@Controller
+@RestController
+@RequestMapping("/api")
 public class UserController {
+	@Autowired
+	private UserDao userDao;
+	
+	/*Get a user by id*/
+	
+	@RequestMapping(value="/users/{Id}")
+	@ResponseBody
+	public User getUserById(@PathVariable("Id") Long id)  {
 
-  /**
-   * GET /create  --> Create a new user and save it in the database.
-   */
-  @RequestMapping("/create")
-  @ResponseBody
-  public String create(String email, String name) {
-    String userId = "";
-    try {
-      User user = new User(email, name);
-      userDao.save(user);
-      userId = String.valueOf(user.getId());
-    }
-    catch (Exception ex) {
-      return "Error creating the user: " + ex.toString();
-    }
-    return "User succesfully created with id = " + userId;
-  }
-  
-  /**
-   * GET /delete  --> Delete the user having the passed id.
-   */
-  @RequestMapping("/delete")
-  @ResponseBody
-  public String delete(long id) {
-    try {
-      User user = new User(id);
-      userDao.delete(user);
-    }
-    catch (Exception ex) {
-      return "Error deleting the user:" + ex.toString();
-    }
-    return "User succesfully deleted!";
-  }
-  
-  /**
-   * GET /get-by-email  --> Return the id for the user having the passed
-   * email.
-   */
-  @RequestMapping("/get-by-email/{email}")
-  @ResponseBody
-  public String getByEmail(@PathVariable("email") String email) {
-    String userId = "";
-    try {
-      User user = userDao.findByEmail(email);
-      userId = String.valueOf(user.getId());
-    }
-    catch (Exception ex) {
-      return "User not found";
-    }
-    return "The user id is: " + userId;
-  }
-  
-  /**
-   * GET /update  --> Update the email and the name for the user in the 
-   * database having the passed id.
-   */
-  @RequestMapping("/update")
-  @ResponseBody
-  public String updateUser(long id, String email, String name) {
-    try {
-      User user = userDao.findById(id).get();
-      user.setEmail(email);
-      user.setName(name);
-      userDao.save(user);
-    }
-    catch (Exception ex) {
-      return "Error updating the user: " + ex.toString();
-    }
-    return "User succesfully updated!";
-  }
+		try {
+			//UserDao userDao = new UserDao();
+			Optional<User> user = userDao.findById(id);
+			if(user.isPresent()) 
+			{
+				return user.get();
 
-  // Private fields
+			}
+			throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
+			
+		}
+		catch (Exception ex) {
+			throw  new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	/*Get All users*/
+	
+	@GetMapping("/users")
+	public ResponseEntity<List<User>> getAllTutorials(@RequestParam(required = false) String id) {
+		try {
+			List<User> users = new ArrayList<User>();
 
-  @Autowired
-  private UserDao userDao;
-  
+			if (id == null)
+				userDao.findAll().forEach(users::add);
+			else
+				userDao.findAll().forEach(users::add);
+
+			if (users.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+
+			return new ResponseEntity<>(users, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	/*Update a User*/
+	
+	@PutMapping("/users/{id}")
+	@ResponseBody
+	public String updateUser(long id, String firstName,String lastName,String email,String password) {
+		try {
+			User user = userDao.findById(id).get();
+			user.setFirstName(firstName);
+			user.setLastName(lastName); 
+			user.setEmail(email);
+			user.setPassword(password);
+			userDao.save(user);
+		}catch (Exception ex) {
+			return "Error updating the user: " + ex.toString();
+		}
+		return "User succesfully updated!";
+	}
+	
+	/**
+	 * GET /delete  --> Delete the user having the passed id.
+	 */
+	
+	@DeleteMapping("/users/{id}")
+	@ResponseBody
+	public String delete(long id) {
+		try {
+			Optional<User> user = userDao.findById(id);
+			if(user.isPresent()) 
+			{
+				userDao.deleteById(id);
+				return "User succesfully deleted!";
+			}
+			throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+			
+			
+		}
+		catch (Exception ex) {
+			return "Error deleting the user:" + ex.toString();
+		}
+		
+	}
+
 }
+

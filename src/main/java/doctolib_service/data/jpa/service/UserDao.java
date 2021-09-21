@@ -1,20 +1,17 @@
-package sample.data.jpa.service;
+package doctolib_service.data.jpa.service;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import sample.data.jpa.domain.User;
+import doctolib_service.data.jpa.domain.User;
 
-// Imports ...
 
-@Transactional
-public interface UserDao extends JpaRepository<User, Long> {
+public interface UserDao extends JpaRepository <User, Long> {
 
-  /**
-   * This method will find an User instance in the database by its email.
-   * Note that this method is not implemented and its working code will be
-   * automagically generated from its signature by Spring Data JPA.
-   */
-  public User findByEmail(String email);
+	//public  User findById(long id);
+	public  User findByEmail(String email);
+	
+		
 
 }
