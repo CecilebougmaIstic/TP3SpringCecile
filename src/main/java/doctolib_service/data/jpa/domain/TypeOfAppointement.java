@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /*with this class a professionnal can manage a type of an appointement
  * describe and duration of an appointement
  *
@@ -32,11 +34,18 @@ public class TypeOfAppointement implements Serializable{
 	private List<Appointement> appointement = new ArrayList<Appointement>();	
 	@ManyToOne
 	@JoinColumn(name="worker_id", nullable=false)
+	@JsonIgnore
 	private Worker worker;
 	
 	
 	
+
+
 	/*Constructors*/
+	public TypeOfAppointement() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	public TypeOfAppointement(String appointementDescription, int appointementLimit,Worker worker) {
 		super();
 		this.id = id;

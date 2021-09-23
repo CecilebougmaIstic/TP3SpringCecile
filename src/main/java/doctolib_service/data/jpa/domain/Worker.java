@@ -15,37 +15,37 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-
+@Table
 @DiscriminatorValue("W")
 public class Worker extends User implements Serializable{
-	
+
 	/*Variables*/
-	 @Id
-	 @GeneratedValue(strategy = GenerationType.AUTO)
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String job;
 	private String bakRib;
-	
+
 	@OneToMany(mappedBy = "worker", cascade = CascadeType.PERSIST)
 	@ElementCollection
+	
 	private List<TypeOfAppointement> typeAppointements = new ArrayList<TypeOfAppointement>();
 	/*@OneToMany(mappedBy = "worker", cascade = CascadeType.PERSIST)*/
 	@ElementCollection
+	@JsonIgnore
 	private List<Appointement> appointements = new ArrayList<Appointement>();
-	
-	
-	
-	
-	
+
 
 	public Worker() {
 		super();
-		
+
 	}
-	
-	
+
 
 	/*Constructor*/
 	public Worker(long id, String job, String bakRib) {
@@ -53,12 +53,10 @@ public class Worker extends User implements Serializable{
 		this.id = id;
 		this.job = job;
 		this.bakRib = bakRib;
-		
+
 	}
 
 
-
-	
 	public Worker(String firstName, String lastName, String email, String password,String job, String bakRib) {
 		super();
 		this.job = job;
@@ -70,7 +68,7 @@ public class Worker extends User implements Serializable{
 	}
 	/*Getters && Setters*/
 
-   
+
 	public long getId() {
 		return id;
 	}
@@ -99,18 +97,15 @@ public class Worker extends User implements Serializable{
 	public void setBakRib(String bakRib) {
 		this.bakRib = bakRib;
 	}
-	
-	
-	
 
 
-		
-		public List<Appointement> getAppointements() {
-			return appointements;
-		}
+
+	public List<Appointement> getAppointements() {
+		return appointements;
+	}
 
 
-		public List<TypeOfAppointement> getTypeAppointements() {
+	public List<TypeOfAppointement> getTypeAppointements() {
 		return typeAppointements;
 	}
 
@@ -120,27 +115,27 @@ public class Worker extends User implements Serializable{
 	}
 
 
-		public void setAppointements(List<Appointement> app) {
-			this.appointements = app;
-		}
+	public void setAppointements(List<Appointement> app) {
+		this.appointements = app;
+	}
 
 
 
 
 
-		@Override
-		public String toString() {
-			return "Worker [id=" + id + ", job=" + job + ", bakRib=" + bakRib + ", typeAppointements="
-					+ typeAppointements + ", appointements=" + appointements + "]";
-		}
+	@Override
+	public String toString() {
+		return "Worker [id=" + id + ", job=" + job + ", bakRib=" + bakRib + ", typeAppointements="
+				+ typeAppointements + ", appointements=" + appointements + "]";
+	}
 
 
 
 
 
-	
-	
-	
-	
+
+
+
+
 
 }

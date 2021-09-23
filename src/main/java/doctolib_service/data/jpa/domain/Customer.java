@@ -14,10 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /*This class create a customer*/
 @Entity
-
+@Table
 @DiscriminatorValue("C")
 public class Customer extends User implements Serializable{
 

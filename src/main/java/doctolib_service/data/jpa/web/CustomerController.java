@@ -18,12 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-
-
 import doctolib_service.data.jpa.domain.Customer;
-import doctolib_service.data.jpa.domain.User;
 import doctolib_service.data.jpa.service.CustomerDao;
+import io.swagger.annotations.ApiOperation;
 
 
 @RestController
@@ -34,13 +31,14 @@ public class CustomerController {
 	private CustomerDao  customerDao;
 
 	/*Get a customer by id*/
-	
+	@ApiOperation(value = "Récupère un Customer grâce à son ID à "
+			+ "condition que celui-ci existe dans la base!")
 	@RequestMapping(value="/customers/{Id}")
 	@ResponseBody
+	
 	public Customer getCustomerById(@PathVariable("Id") Long id)  {
 
 		try {
-			//UserDao userDao = new UserDao();
 			Optional<Customer> customer = customerDao.findById(id);
 			if(customer.isPresent()) 
 			{
@@ -48,7 +46,7 @@ public class CustomerController {
 
 			}
 			throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
-			
+
 		}
 		catch (Exception ex) {
 			throw  new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -57,8 +55,11 @@ public class CustomerController {
 
 	/*Get a list of customers by they lastName or firstName or email*/
 
-
+	@ApiOperation(value = "Récupère une liste Customer grâce à un filtre sur les paramètres firstName, lastName et email "
+			+ "condition que celui-ci existe dans la base!")
+	
 	@GetMapping("/customers")
+	
 	public ResponseEntity <List<Customer>> getCustomerByFirstname(@RequestParam(required = false) String lastName,
 			@RequestParam(required = false) String firstName,@RequestParam(required = false) String email) {
 		List<Customer> customers = new ArrayList<Customer>();
@@ -87,14 +88,15 @@ public class CustomerController {
 
 	}
 
+	@ApiOperation(value = "Crer un customer")
 	@PostMapping("/customers")
 	public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
 		try {
-			
+
 			//customerDao.save(customer);
 			Customer cust = customerDao
-						.save(new Customer(customer.getLastName(),customer.getFirstName(), customer.getEmail(),
-								customer.getPassword(),customer.getBankCard()));
+					.save(new Customer(customer.getLastName(),customer.getFirstName(), customer.getEmail(),
+							customer.getPassword(),customer.getBankCard()));
 			return new ResponseEntity<>(customer, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -103,13 +105,14 @@ public class CustomerController {
 
 
 	/*Update a Customer by id*/
-	
+	@ApiOperation(value = "Modifier un Customer par son id ")
 	@PutMapping("/customers/{id}")
 	@ResponseBody
 	public String updateCustomer(@PathVariable("id") long id, String firstName,String lastName,String email,String password, String bankCard) {
 		//Long idCustomer;
 		try {
-		 Customer customer = customerDao.findById(id).get();
+
+			Customer customer = customerDao.findById(id).get();
 			customer.setFirstName(firstName);
 			customer.setLastName(lastName); 
 			customer.setEmail(email);
@@ -123,8 +126,10 @@ public class CustomerController {
 		//return idCustomer + " "+ "Customer succesfully updated!";
 		return "Customer succesfully updated!";
 	}
-/*Delete a customer*/
 
+
+	/*Delete a customer*/
+	@ApiOperation(value = "Supprimer un Customer par son id ")
 	@DeleteMapping("/customers/{id}")
 	public ResponseEntity<HttpStatus> deleteCustomerById(@PathVariable("id") long id) {
 		try {
@@ -134,8 +139,9 @@ public class CustomerController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	/*Delete all customers*/
+	@ApiOperation(value = "Supprimer tous les Customer par son id ")
 	@DeleteMapping("/customers")
 	@ResponseBody
 	public ResponseEntity<HttpStatus> deleteAllCustomers() {

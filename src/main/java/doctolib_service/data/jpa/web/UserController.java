@@ -22,7 +22,7 @@ import doctolib_service.data.jpa.service.UserDao;
 
 @RestController
 @RequestMapping("/api")
-public class UserController {
+public abstract class UserController {
 	
 	@Autowired
 	private UserDao userDao;
@@ -52,13 +52,12 @@ public class UserController {
 	/*Get All users*/
 	
 	@GetMapping("/users")
-	public ResponseEntity<List<User>> getAllTutorials(@RequestParam(required = false) String id) {
+	@ResponseBody
+	public ResponseEntity<List<User>> getAllUsers() {
 		try {
 			List<User> users = new ArrayList<User>();
 
-			if (id == null)
-				userDao.findAll().forEach(users::add);
-			else
+			
 				userDao.findAll().forEach(users::add);
 
 			if (users.isEmpty()) {

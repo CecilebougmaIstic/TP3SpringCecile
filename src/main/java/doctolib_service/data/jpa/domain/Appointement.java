@@ -36,6 +36,9 @@ public class Appointement implements Serializable{
 	private Worker worker;
 	/*Construtors*/	
 	
+	public Appointement() {
+		super();
+	}
 
 	public Appointement(Calendar appointementStart, Calendar appointementEnd, String appointementPlace) {
 		super();
@@ -133,6 +136,8 @@ public class Appointement implements Serializable{
 				+ typeAppointement + ", customer=" + customer.toString() + ", worker=" + worker.toString() + "]";
 	}
 
+
+	
 	
 	
 	

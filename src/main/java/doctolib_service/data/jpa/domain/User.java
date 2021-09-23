@@ -13,10 +13,10 @@ import javax.persistence.Table;
 
 /*This class manage a User*/
 @Entity
-//@Inheritance(strategy=InheritanceType.JOINED)
-//@DiscriminatorColumn(name="User_type")
+@Inheritance(strategy=InheritanceType.JOINED)
+@DiscriminatorColumn(name="User_type")
 @Table
-public  class User {
+public  class User implements Serializable{
 	
 	/*Variables*/
     @Id
