@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /*with this class a professionnal can manage a type of an appointement
@@ -23,19 +25,23 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 public class TypeOfAppointement implements Serializable{
 	
+	
 	/*Variables*/
 	 @Id
 	  @GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private String appointementDescription;
 	private int appointementLimit;
-	@OneToMany(mappedBy = "typeAppointement", cascade = CascadeType.PERSIST)
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name="worker_id", nullable=false)
+	@JsonBackReference
+	private Worker worker;
+	
+	@OneToMany(fetch = FetchType.LAZY,mappedBy = "typeAppointement", cascade = CascadeType.PERSIST)
 	@ElementCollection
 	private List<Appointement> appointement = new ArrayList<Appointement>();	
-	@ManyToOne
-	@JoinColumn(name="worker_id", nullable=false)
-	@JsonIgnore
-	private Worker worker;
+	
 	
 	
 	
@@ -48,7 +54,7 @@ public class TypeOfAppointement implements Serializable{
 	}
 	public TypeOfAppointement(String appointementDescription, int appointementLimit,Worker worker) {
 		super();
-		this.id = id;
+		//this.id = id;
 		this.appointementDescription = appointementDescription;
 		this.appointementLimit = appointementLimit;
 		this.worker= worker;

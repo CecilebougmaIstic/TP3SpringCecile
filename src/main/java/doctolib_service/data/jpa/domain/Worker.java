@@ -8,6 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,6 +19,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table
@@ -31,13 +33,14 @@ public class Worker extends User implements Serializable{
 	private String job;
 	private String bakRib;
 
-	@OneToMany(mappedBy = "worker", cascade = CascadeType.PERSIST)
+	@OneToMany(fetch = FetchType.EAGER,mappedBy = "worker", cascade = CascadeType.PERSIST)
 	@ElementCollection
-	
+	@JsonManagedReference
 	private List<TypeOfAppointement> typeAppointements = new ArrayList<TypeOfAppointement>();
-	/*@OneToMany(mappedBy = "worker", cascade = CascadeType.PERSIST)*/
+	
+	@OneToMany(fetch = FetchType.LAZY,mappedBy = "worker", cascade = CascadeType.PERSIST)
 	@ElementCollection
-	@JsonIgnore
+	@JsonManagedReference
 	private List<Appointement> appointements = new ArrayList<Appointement>();
 
 
