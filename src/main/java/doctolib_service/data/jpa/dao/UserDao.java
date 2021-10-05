@@ -1,4 +1,4 @@
-package doctolib_service.data.jpa.service;
+package doctolib_service.data.jpa.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

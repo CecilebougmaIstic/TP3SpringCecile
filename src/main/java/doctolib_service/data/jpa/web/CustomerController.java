@@ -18,8 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import doctolib_service.data.jpa.dao.CustomerDao;
 import doctolib_service.data.jpa.domain.Customer;
-import doctolib_service.data.jpa.service.CustomerDao;
 import io.swagger.annotations.ApiOperation;
 
 

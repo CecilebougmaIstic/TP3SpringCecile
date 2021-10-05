@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import doctolib_service.data.jpa.dao.TypeOfAppointementDao;
 import doctolib_service.data.jpa.domain.TypeOfAppointement;
 import doctolib_service.data.jpa.domain.Worker;
-import doctolib_service.data.jpa.service.TypeOfAppointementDao;
 import io.swagger.annotations.ApiOperation;
 
 
@@ -80,6 +80,7 @@ public class TypeOfAppointementController {
 
 	}*/
 
+	/*Create an TypeOfAppointement*/
 	@ApiOperation(value = "Create a TypeOfAppointement")
 	@PostMapping("/typeOfAppointements")
 	public ResponseEntity<TypeOfAppointement> createTypeOfAppointement(@RequestBody TypeOfAppointement typeOfAppointement) {

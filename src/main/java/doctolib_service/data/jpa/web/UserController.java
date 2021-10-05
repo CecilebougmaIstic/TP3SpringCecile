@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import doctolib_service.data.jpa.dao.UserDao;
 import doctolib_service.data.jpa.domain.User;
-import doctolib_service.data.jpa.service.UserDao;
 
 @RestController
 @RequestMapping("/api")

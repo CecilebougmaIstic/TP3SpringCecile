@@ -1,4 +1,4 @@
-package doctolib_service.data.jpa.service;
+package doctolib_service.data.jpa.dao;
 
 import java.util.List;
 
