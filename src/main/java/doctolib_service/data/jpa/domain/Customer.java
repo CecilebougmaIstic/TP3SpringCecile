@@ -83,6 +83,11 @@ public class Customer extends User implements Serializable{
 		this.appointement = appointement;
 	}
 
+	@Override
+	public String toString() {
+		return "Customer [id=" + id + ", bankCard=" + bankCard + ", appointement=" + appointement + "]";
+	}
+
 
 
 

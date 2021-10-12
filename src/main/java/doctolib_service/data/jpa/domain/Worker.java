@@ -40,7 +40,7 @@ public class Worker extends User implements Serializable{
 	
 	@OneToMany(fetch = FetchType.LAZY,mappedBy = "worker", cascade = CascadeType.PERSIST)
 	@ElementCollection
-	@JsonManagedReference
+	//@JsonManagedReference
 	private List<Appointement> appointements = new ArrayList<Appointement>();
 
 

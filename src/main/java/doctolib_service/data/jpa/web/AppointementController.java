@@ -1,12 +1,17 @@
 package doctolib_service.data.jpa.web;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +36,14 @@ public class AppointementController {
 	AppointementDao appointementDao;
 	@Autowired
 	WorkerDao workerDao;
+	/*
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+		// Date - dd/MM/yyyy
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
+	}*/
+
 	
 	/*Get an appointement by id*/
 	@ApiOperation(value = "Récupère un Appointement grâce à son ID à "
@@ -97,15 +110,18 @@ public class AppointementController {
 	
 	@ApiOperation(value = "Create an Appointement")
 	@PostMapping("/appointements")
-	public ResponseEntity<Appointement> createAppointement(@RequestBody Appointement appointement) {
+
+	public ResponseEntity<Appointement> createAppointement(@RequestBody @Validated Appointement appointement) {
 		try {
 
 			// workerDao.save(customer);
+			System.out.println("ghhdddd");
+			System.out.println(appointement.toString());
 	
-			Appointement _appointement = appointementDao.save(new Appointement(appointement.getAppointementStart(),appointement.getAppointementEnd(),
-					appointement.getAppointementPlace(),appointement.getTypeAppointement(), appointement.getCustomer()));
-
-			return new ResponseEntity<>(_appointement, HttpStatus.CREATED);
+			Appointement _appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementEnd(),
+					appointement.getAppointementPlace(),appointement.getTypeAppointement(), appointement.getCustomer(),appointement.getWorker()));
+		
+			return new ResponseEntity<>(null, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}

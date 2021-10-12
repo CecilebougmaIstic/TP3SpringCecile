@@ -1,8 +1,7 @@
 package doctolib_service.data.jpa.domain;
-
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Calendar;
+import java.util.Date;
+
 
 import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
@@ -15,6 +14,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 /*This class manage an appointement */
 @Entity
 public class Appointement implements Serializable{
@@ -23,19 +26,28 @@ public class Appointement implements Serializable{
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
-	private Calendar appointementStart;
-	private Calendar appointementEnd;
+	//@JsonSerialize(using = CustomLocalDateTimeSerializer.class)
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private Date appointementStart;
+	//@JsonSerialize(using = CustomLocalDateTimeSerializer.class)
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	private Date appointementEnd;
+	
 	private String appointementPlace;
 	
-	@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="typeAppointement_id", nullable=false)
+	@JsonBackReference
 	private TypeOfAppointement typeAppointement;
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="customer_id", nullable=false)
+	@JsonBackReference
 	private Customer customer;	
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="worker_id", nullable=false)
+	@JsonBackReference
 	private Worker worker;
 	
 	/*Construtors*/	
@@ -43,40 +55,18 @@ public class Appointement implements Serializable{
 	public Appointement() {
 		super();
 	}
-
-	public Appointement(Calendar appointementStart, Calendar appointementEnd, String appointementPlace) {
+	public Appointement(long id, Date appointementStart, Date appointementEnd, String appointementPlace,
+			TypeOfAppointement typeAppointement, Customer customer, Worker worker) {
 		super();
-		this.appointementStart = appointementStart;
-		this.appointementEnd = appointementEnd;
-		this.appointementPlace = appointementPlace;
-	}
-
-
-	public Appointement(Calendar appointementStart, Calendar appointementEnd, String appointementPlace,
-			TypeOfAppointement typeAppointement, Customer customer) {
-		super();
+		this.id = id;
 		this.appointementStart = appointementStart;
 		this.appointementEnd = appointementEnd;
 		this.appointementPlace = appointementPlace;
 		this.typeAppointement = typeAppointement;
 		this.customer = customer;
-	}
-
-	public Appointement(Calendar appointementStart, Calendar appointementEnd, String appointementPlace,
-			TypeOfAppointement typeAppointement, Worker worker) {
-		super();
-		this.appointementStart = appointementStart;
-		this.appointementEnd = appointementEnd;
-		this.appointementPlace = appointementPlace;
-		this.typeAppointement = typeAppointement;
 		this.worker = worker;
 	}
-	
-	
 
-	/*Getters && Setters*/
-
-    
 	public long getId() {
 		return id;
 	}
@@ -85,19 +75,19 @@ public class Appointement implements Serializable{
 		this.id = id;
 	}
 
-	public Calendar getAppointementStart() {
+	public Date getAppointementStart() {
 		return appointementStart;
 	}
 
-	public void setAppointementStart(Calendar appointementStart) {
+	public void setAppointementStart(Date appointementStart) {
 		this.appointementStart = appointementStart;
 	}
 
-	public Calendar getAppointementEnd() {
+	public Date getAppointementEnd() {
 		return appointementEnd;
 	}
 
-	public void setAppointementEnd(Calendar appointementEnd) {
+	public void setAppointementEnd(Date appointementEnd) {
 		this.appointementEnd = appointementEnd;
 	}
 
@@ -108,23 +98,7 @@ public class Appointement implements Serializable{
 	public void setAppointementPlace(String appointementPlace) {
 		this.appointementPlace = appointementPlace;
 	}
-	
-	public Worker getWorker() {
-		return worker;
-	}
 
-	public void setWorker(Worker worker) {
-		this.worker = worker;
-	}
-	
-	public Customer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
-	
 	public TypeOfAppointement getTypeAppointement() {
 		return typeAppointement;
 	}
@@ -133,11 +107,28 @@ public class Appointement implements Serializable{
 		this.typeAppointement = typeAppointement;
 	}
 
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public Worker getWorker() {
+		return worker;
+	}
+
+	public void setWorker(Worker worker) {
+		this.worker = worker;
+	}
+
+	
 	@Override
 	public String toString() {
 		return "Appointement [id=" + id + ", appointementStart=" + appointementStart + ", appointementEnd="
 				+ appointementEnd + ", appointementPlace=" + appointementPlace + ", typeAppointement="
-				+ typeAppointement + ", customer=" + customer.toString() + ", worker=" + worker.toString() + "]";
+				+ typeAppointement + ", customer=" + customer + ", worker=" + worker + "]";
 	}
 
 
