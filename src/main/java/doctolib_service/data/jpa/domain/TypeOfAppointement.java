@@ -35,11 +35,12 @@ public class TypeOfAppointement implements Serializable{
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="worker_id", nullable=false)
-	@JsonBackReference
+	@JsonBackReference(value="worker-typeOfAppointement") //ignore
 	private Worker worker;
 	
 	@OneToMany(fetch = FetchType.LAZY,mappedBy = "typeAppointement", cascade = CascadeType.PERSIST)
 	@ElementCollection
+	@JsonBackReference(value="appointement-typeAppointement")
 	private List<Appointement> appointement = new ArrayList<Appointement>();	
 	
 	

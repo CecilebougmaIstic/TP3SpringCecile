@@ -1,5 +1,7 @@
 package doctolib_service.data.jpa.web;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -51,21 +54,21 @@ public class TypeOfAppointementController {
 	}
 
 	/* Get a list of TypeOfAppointement by  */
-/*
+
 	@ApiOperation(value = "Get a liste of TypeOfAppointement by filtering on the "
 			+ "@parameter appointementDescription, @ appointementLimit"
 			+ "condition: A TypeOfAppointement exists on base!")
 	@GetMapping("/typeOfAppointements")
 	
 	public ResponseEntity<List<TypeOfAppointement>> getTypeOfAppointementAttributs(@RequestParam(required = false) String appointementDescription,
-			@RequestParam(required = false) int appointementLimit) {
+			@RequestParam(required = false) Integer appointementLimit) {
 		List<TypeOfAppointement> typeAppointements = new ArrayList<TypeOfAppointement>();
 		try {
-			if (appointementDescription != null && appointementLimit != 0)
+			if (appointementDescription != null && appointementLimit != null)
 				typeOfAppointementDao.findByAppointementDescriptionContainingAndAppointementLimitContaining(appointementDescription, appointementLimit).forEach(typeAppointements::add);
 			else if (appointementDescription!= null)
 				typeOfAppointementDao.findByAppointementDescription(appointementDescription).forEach(typeAppointements::add);
-			else if (appointementLimit != 0)
+			else if (appointementLimit != null)
 				typeOfAppointementDao.findByAppointementLimit(appointementLimit).forEach(typeAppointements::add);
 			else
 				typeOfAppointementDao.findAll().forEach(typeAppointements::add);
@@ -78,7 +81,7 @@ public class TypeOfAppointementController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-	}*/
+	}
 
 	/*Create an TypeOfAppointement*/
 	@ApiOperation(value = "Create a TypeOfAppointement")
@@ -118,7 +121,7 @@ public class TypeOfAppointementController {
 		return  id + " " + "succesfully updated!";
 	}
 
-	/* Delete a customer */
+	/* Delete a  */
 	@ApiOperation(value = "Delete a TypeOfAppointement by id ")
 	@DeleteMapping("/typeOfAppointements/{id}")
 	public ResponseEntity<HttpStatus> deleteTypeOfAppointementById(@PathVariable("id") long id) {

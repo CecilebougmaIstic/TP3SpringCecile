@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import doctolib_service.data.jpa.dao.CustomerDao;
 import doctolib_service.data.jpa.domain.Customer;
+import doctolib_service.data.jpa.domain.Worker;
 import io.swagger.annotations.ApiOperation;
 
 
@@ -32,11 +33,11 @@ public class CustomerController {
 	private CustomerDao  customerDao;
 
 	/*Get a customer by id*/
-	@ApiOperation(value = "Récupère un Customer grâce à son ID à "
-			+ "condition que celui-ci existe dans la base!")
+	@ApiOperation(value = "Get a customer by his id "
+			+ "condition: if this customer exits in base.")
 	@RequestMapping(value="/customers/{Id}")
 	@ResponseBody
-	
+
 	public Customer getCustomerById(@PathVariable("Id") Long id)  {
 
 		try {
@@ -56,11 +57,11 @@ public class CustomerController {
 
 	/*Get a list of customers by they lastName or firstName or email*/
 
-	@ApiOperation(value = "Récupère une liste Customer grâce à un filtre sur les paramètres firstName, lastName et email "
-			+ "condition que celui-ci existe dans la base!")
-	
+	@ApiOperation(value = "Get a listof customer, filtred on @parametres firstName, lastName and email "
+			+ "condition: if this customer exits in base!")
+
 	@GetMapping("/customers")
-	
+
 	public ResponseEntity <List<Customer>> getCustomerByFirstname(@RequestParam(required = false) String lastName,
 			@RequestParam(required = false) String firstName,@RequestParam(required = false) String email) {
 		List<Customer> customers = new ArrayList<Customer>();
@@ -89,68 +90,70 @@ public class CustomerController {
 
 	}
 
-	@ApiOperation(value = "Crer un customer")
+	@ApiOperation(value = "Create a customer")
 	@PostMapping("/customers")
-	public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+	public ResponseEntity<String> createCustomer(@RequestBody Customer customer) {
 		try {
 
 			//customerDao.save(customer);
 			Customer cust = customerDao
 					.save(new Customer(customer.getLastName(),customer.getFirstName(), customer.getEmail(),
 							customer.getPassword(),customer.getBankCard()));
-			return new ResponseEntity<>(customer, HttpStatus.CREATED);
+			return new ResponseEntity<>("User succesfully created with id = " +customer.getId(), HttpStatus.CREATED);
 		} catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>("Error creating the user: "+" "+customer.getId(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 
 	/*Update a Customer by id*/
-	@ApiOperation(value = "Modifier un Customer par son id ")
+	@ApiOperation(value = "Modified a Customer by id ")
 	@PutMapping("/customers/{id}")
 	@ResponseBody
-	public String updateCustomer(@PathVariable("id") long id, String firstName,String lastName,String email,String password, String bankCard) {
-		//Long idCustomer;
-		try {
+	public ResponseEntity<Customer> updateCustomer(@PathVariable("id") long id, @RequestBody  Customer customer) {
 
-			Customer customer = customerDao.findById(id).get();
-			customer.setFirstName(firstName);
-			customer.setLastName(lastName); 
-			customer.setEmail(email);
-			customer.setPassword(password);
-			customer.setBankCard(bankCard);
-			customerDao.save(customer);
-			//idCustomer= customer.getId();
-		}catch (Exception ex) {
-			return "Error updating the user: " + ex.toString();
-		}
-		//return idCustomer + " "+ "Customer succesfully updated!";
-		return "Customer succesfully updated!";
+
+		Optional<Customer> customerData = customerDao.findById(id);
+		if(customerData.isPresent())
+		{
+			Customer _customer=customerData.get();
+			_customer.setFirstName(customer.getFirstName());
+			_customer.setLastName(customer.getLastName()); 
+			_customer.setEmail(customer.getEmail());
+			_customer.setPassword(customer.getPassword());
+			_customer.setBankCard(customer.getBankCard());
+			return new ResponseEntity<>(customerDao.save(_customer), HttpStatus.OK);
+		}else
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
 	}
 
 
 	/*Delete a customer*/
 	@ApiOperation(value = "Supprimer un Customer par son id ")
 	@DeleteMapping("/customers/{id}")
-	public ResponseEntity<HttpStatus> deleteCustomerById(@PathVariable("id") long id) {
-		try {
+	
+	public ResponseEntity<String> deleteCustomerById(@PathVariable("id") long id) {
+		Optional<Customer> customerData = customerDao.findById(id);
+		if (!customerData.isPresent()) {
+			return new ResponseEntity<>("Error deleting:"+" "+ id,HttpStatus.NOT_FOUND);
+		}else { 
 			customerDao.deleteById(id);
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>( id+ " "+" succesfully deleted!",HttpStatus.NO_CONTENT);
 		}
+		
 	}
 
 	/*Delete all customers*/
 	@ApiOperation(value = "Supprimer tous les Customer par son id ")
 	@DeleteMapping("/customers")
 	@ResponseBody
-	public ResponseEntity<HttpStatus> deleteAllCustomers() {
+	public ResponseEntity<String> deleteAllCustomers() {
 		try {
 			customerDao.deleteAll();
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			return new ResponseEntity<>(" succesfully deleted!",HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>("Error deleting the user:" + e.toString(),HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}

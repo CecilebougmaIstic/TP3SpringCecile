@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -35,12 +36,12 @@ public class Worker extends User implements Serializable{
 
 	@OneToMany(fetch = FetchType.EAGER,mappedBy = "worker", cascade = CascadeType.PERSIST)
 	@ElementCollection
-	@JsonManagedReference
+	@JsonManagedReference(value="worker-typeOfAppointement")
 	private List<TypeOfAppointement> typeAppointements = new ArrayList<TypeOfAppointement>();
 	
 	@OneToMany(fetch = FetchType.LAZY,mappedBy = "worker", cascade = CascadeType.PERSIST)
 	@ElementCollection
-	//@JsonManagedReference
+	@JsonBackReference(value="worker-appointement")
 	private List<Appointement> appointements = new ArrayList<Appointement>();
 
 

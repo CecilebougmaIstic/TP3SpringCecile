@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /*This class manage an appointement */
@@ -37,17 +38,17 @@ public class Appointement implements Serializable{
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="typeAppointement_id", nullable=false)
-	@JsonBackReference
+	@JsonManagedReference(value="appointement-typeAppointement")
 	private TypeOfAppointement typeAppointement;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="customer_id", nullable=false)
-	@JsonBackReference
+	@JsonManagedReference(value="customer-appointement")
 	private Customer customer;	
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="worker_id", nullable=false)
-	@JsonBackReference
+	@JsonManagedReference(value="worker-appointement")
 	private Worker worker;
 	
 	/*Construtors*/	

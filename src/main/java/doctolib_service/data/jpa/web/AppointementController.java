@@ -111,16 +111,16 @@ public class AppointementController {
 	@ApiOperation(value = "Create an Appointement")
 	@PostMapping("/appointements")
 
-	public ResponseEntity<Appointement> createAppointement(@RequestBody @Validated Appointement appointement) {
+	public ResponseEntity<Appointement> createAppointement(@RequestBody  Appointement appointement) {
 		try {
 
 			// workerDao.save(customer);
 			System.out.println("ghhdddd");
 			System.out.println(appointement.toString());
 	
-			Appointement _appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementEnd(),
+			/*Appointement _appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementEnd(),
 					appointement.getAppointementPlace(),appointement.getTypeAppointement(), appointement.getCustomer(),appointement.getWorker()));
-		
+		*/
 			return new ResponseEntity<>(null, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

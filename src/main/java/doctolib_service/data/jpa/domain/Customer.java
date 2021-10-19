@@ -16,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 /*This class create a customer*/
 @Entity
 @Table
@@ -29,6 +31,7 @@ public class Customer extends User implements Serializable{
 	private String bankCard;
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST)
 	@ElementCollection
+	@JsonBackReference(value="customer-appointement")
 	private List<Appointement> appointement = new ArrayList<Appointement>();
 
 	/*Constructor*/

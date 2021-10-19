@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import doctolib_service.data.jpa.dao.WorkerDao;
+import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.Worker;
 import io.swagger.annotations.ApiOperation;
 
@@ -31,8 +32,8 @@ public class WorkerController {
 	private WorkerDao  workerDao;
 
 	/*Get a worker by id*/
-	@ApiOperation(value = "Récupère un Worker grâce à son ID à "
-			+ "condition que celui-ci existe dans la base!")
+	@ApiOperation(value = "Get a worker by his id "
+			+ "condition: if this worker exits in base.")
 	@RequestMapping(value="/workers/{Id}")
 	@ResponseBody
 	public Worker getWorkerById(@PathVariable("Id") Long id)  {
@@ -86,7 +87,7 @@ public class WorkerController {
 
 	}
 
-	@ApiOperation(value = "Crer un customer")
+	@ApiOperation(value = "Create a worker")
 	@PostMapping("/workers")
 	public ResponseEntity<Worker> createWorker(@RequestBody Worker worker) {
 		try {
@@ -103,51 +104,57 @@ public class WorkerController {
 
 
 	/*Update a Worker by id*/
-	@ApiOperation(value = "Modifier un Worker par son id ")
+	@ApiOperation(value = "Modified a worker by his id")
 	@PutMapping("/workers/{id}")
 	@ResponseBody
-	public String updateWorker(@PathVariable("id") long id, String firstName,String lastName,String email,String password, String bakRib) {
-		//Long idWorker;
-		try {
 
-			Worker worker = workerDao.findById(id).get();
-			worker.setFirstName(firstName);
-			worker.setLastName(lastName); 
-			worker.setEmail(email);
-			worker.setPassword(password);
-			worker.setBakRib(bakRib);
-			workerDao.save(worker);
-			//idWorker= customer.getId();
-		}catch (Exception ex) {
-			return "Error updating the user: " + ex.toString();
-		}
-		//return idWorker + " "+ "Worker succesfully updated!";
-		return "Worker succesfully updated!";
+	
+
+	public ResponseEntity<Worker> updateWorker(@PathVariable("id") long id, @RequestBody  Worker worker) {
+		//Long idWorker;
+		
+
+			Optional<Worker> workerData = workerDao.findById(id);
+			if(workerData.isPresent()) {
+				Worker _worker=workerData.get();
+				_worker.setFirstName(worker.getFirstName());
+				_worker.setLastName(worker.getLastName()); 
+				_worker.setEmail(worker.getEmail());
+				_worker.setPassword(worker.getPassword());
+				_worker.setBakRib(worker.getBakRib());
+			
+			return new ResponseEntity<>(workerDao.save(_worker), HttpStatus.OK);
+			}else
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
 	}
 
 
-	/*Delete a customer*/
-	@ApiOperation(value = "Supprimer un Worker par son id ")
+	/*Delete a worker*/
+	@ApiOperation(value = "delete a Worker by id ")
 	@DeleteMapping("/workers/{id}")
-	public ResponseEntity<HttpStatus> deleteWorkerById(@PathVariable("id") long id) {
-		try {
+	public ResponseEntity<String> deleteWorkerById(@PathVariable("id") long id) {
+		Optional<Worker> workerData = workerDao.findById(id);
+		if (!workerData.isPresent()) {
+			return new ResponseEntity<>("Error deleting:"+" "+ id,HttpStatus.NOT_FOUND);
+		}else { 
 			workerDao.deleteById(id);
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		
+			return new ResponseEntity<>( id+ " "+" succesfully deleted!",HttpStatus.NO_CONTENT);
 		}
+		
 	}
 
 	/*Delete all workers*/
-	@ApiOperation(value = "Supprimer tous les Worker par son id ")
+	@ApiOperation(value = "delete all workers ")
 	@DeleteMapping("/workers")
 	@ResponseBody
-	public ResponseEntity<HttpStatus> deleteAllWorkers() {
+	public ResponseEntity<String> deleteAllWorkers() {
 		try {
 			workerDao.deleteAll();
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			return new ResponseEntity<>(" succesfully deleted!",HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>("Error deleting the user:" + e.toString(),HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
