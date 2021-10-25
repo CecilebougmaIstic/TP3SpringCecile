@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,24 +35,19 @@ public class WorkerController {
 	/*Get a worker by id*/
 	@ApiOperation(value = "Get a worker by his id "
 			+ "condition: if this worker exits in base.")
-	@RequestMapping(value="/workers/{Id}")
+	@RequestMapping(value="/workers/{Id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@ResponseBody
-	public Worker getWorkerById(@PathVariable("Id") Long id)  {
-
-		try {
-			//UserDao userDao = new UserDao();
-			Optional<Worker> worker = workerDao.findById(id);
-			if(worker.isPresent()) 
-			{
-				return worker.get();
-
-			}
-			throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
-
+	
+	public ResponseEntity<Worker>  getWorkerById(@PathVariable("Id") Long id)  {
+		Optional<Worker> worker = workerDao.findById(id);
+		
+	
+		if (worker.isPresent()) {
+			return new ResponseEntity<>(worker.get(), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		catch (Exception ex) {
-			throw  new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		
 	}
 
 	/*Get a list of workers by they lastName or firstName or email*/
@@ -154,7 +150,7 @@ public class WorkerController {
 			workerDao.deleteAll();
 			return new ResponseEntity<>(" succesfully deleted!",HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
-			return new ResponseEntity<>("Error deleting the user:" + e.toString(),HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>("Error deleting the worker:" + e.toString(),HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}

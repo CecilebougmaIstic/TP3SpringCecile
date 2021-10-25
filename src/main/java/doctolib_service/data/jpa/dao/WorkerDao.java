@@ -23,7 +23,11 @@ public interface WorkerDao extends JpaRepository <Worker, Long>{
 	List<Worker> findByFirstNameContaining(String firstName);
 
 	List<Worker> findByEmailContaining(String email);
+	
+	//Worker findById(long id);
+	
 
+	@SuppressWarnings("unchecked")
 	Worker save(Worker worker);
 
 }

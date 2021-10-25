@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,7 +45,7 @@ public class AppointementController {
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
 	}*/
 
-	
+
 	/*Get an appointement by id*/
 	@ApiOperation(value = "Récupère un Appointement grâce à son ID à "
 			+ "condition que celui-ci existe dans la base!")
@@ -53,7 +54,7 @@ public class AppointementController {
 	public Appointement getAppointementById(@PathVariable("Id") Long id)  {
 
 		try {
-			
+
 			Optional<Appointement> appointement = appointementDao.findById(id);
 			if(appointement.isPresent()) 
 			{
@@ -68,46 +69,95 @@ public class AppointementController {
 		}
 	}
 
-	/*Get all appointements for a worker*/
-	
-	@ApiOperation(value = "Récupère tous les appointements d'un user à "
+	/*Get all appointements of a worker*/
+	/*List of a worker' appointements*/	
+
+	@ApiOperation(value = "Récupère tous les appointements d'un Worker à "
 			+ "condition que celui-ci existe dans la base!")
-	@RequestMapping(value="/appointements/worker/{workerId}")
+	@RequestMapping(value="/appointements/workers/{workerId}")
 	public ResponseEntity <List<Appointement>> getAllAppointementsOfWorker(@PathVariable("workerId") Long workerId)
-			{
+	{
 		List<Appointement> appointements = new ArrayList<Appointement>();
 		long recupWorkerId;
-		
-		
+
+
 		try {
 			/*récupérer id de l'utilisateur*/
 			//User recupUser= new User();
 			Optional<Worker> _worker=workerDao.findById(workerId);
 			//recupUserId =recupUser.getId();
 			//find in table Appointement, all appointements for a user by his id.		
-				if(_worker.isPresent()) {
-					
-					appointementDao.findAppointementByWorkerId(workerId).forEach(appointements::add);;
-					
-				} else
-					
-				throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
-				
-				if(appointements.isEmpty()) 
-				{
-					throw  new ResponseStatusException(HttpStatus.NOT_FOUND); 
-					
+			if(_worker.isPresent()) {
 
-				}
-				
-				return new ResponseEntity<>(appointements, HttpStatus.OK);
+				appointementDao.findAppointementByWorkerId(workerId).forEach(appointements::add);;
+
+			} else
+
+				throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+			if(appointements.isEmpty()) 
+			{
+				throw  new ResponseStatusException(HttpStatus.NOT_FOUND); 
+
+
 			}
+
+			return new ResponseEntity<>(appointements, HttpStatus.OK);
+		}
 		catch (Exception ex) {
 			throw  new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-			}
-	/*Create an Appointement by a Customer */
+	}
 	
+	
+	
+
+
+	/*List of a customer' appointements*/	
+
+	@ApiOperation(value = "Récupère tous les appointements d'un Worker à "
+			+ "condition que celui-ci existe dans la base!")
+	@RequestMapping(value="/appointements/customer/{customerId}")
+	public ResponseEntity <List<Appointement>> getAllAppointementsOfCustomer(@PathVariable("workerId") Long workerId)
+	{
+		List<Appointement> appointements = new ArrayList<Appointement>();
+		long recupWorkerId;
+
+
+		try {
+			/*récupérer id de l'utilisateur*/
+			//User recupUser= new User();
+			Optional<Worker> _worker=workerDao.findById(workerId);
+			//recupUserId =recupUser.getId();
+			//find in table Appointement, all appointements for a user by his id.		
+			if(_worker.isPresent()) {
+
+				appointementDao.findAppointementByWorkerId(workerId).forEach(appointements::add);;
+
+			} else
+
+				throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+			if(appointements.isEmpty()) 
+			{
+				throw  new ResponseStatusException(HttpStatus.NOT_FOUND); 
+
+
+			}
+
+			return new ResponseEntity<>(appointements, HttpStatus.OK);
+		}
+		catch (Exception ex) {
+			throw  new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	
+	
+	
+	/*Create an Appointement by a Customer */
+
 	@ApiOperation(value = "Create an Appointement")
 	@PostMapping("/appointements")
 
@@ -117,14 +167,50 @@ public class AppointementController {
 			// workerDao.save(customer);
 			System.out.println("ghhdddd");
 			System.out.println(appointement.toString());
-	
+
 			/*Appointement _appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementEnd(),
 					appointement.getAppointementPlace(),appointement.getTypeAppointement(), appointement.getCustomer(),appointement.getWorker()));
-		*/
+			 */
 			return new ResponseEntity<>(null, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	/*List of a worker' appointements*/	
+
+
+	/*Delete all Appointements*/
+	@ApiOperation(value = "delete all appointements ")
+	@DeleteMapping("/appointements")
+	@ResponseBody
+	public ResponseEntity<String> deleteAllAppointement() {
+		try {
+			appointementDao.deleteAll();
+			return new ResponseEntity<>(" succesfully deleted!",HttpStatus.NO_CONTENT);
+		} catch (Exception e) {
+			return new ResponseEntity<>("Error deleting the appointement:" + e.toString(),HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+
+
+
+	/*Delete an Appointement*/
+
+	@ApiOperation(value = "delete an appointement by id ")
+	@DeleteMapping("/appointements/{id}")
+
+	public ResponseEntity<String> deleteAppointementById(@PathVariable("id") long id) {
+		Optional<Appointement> appointementToDelete = appointementDao.findById(id);
+		if (!appointementToDelete.isPresent()) {
+			return new ResponseEntity<>("Error deleting:"+" "+ id,HttpStatus.NOT_FOUND);
+		}else { 
+			appointementDao.deleteById(id);
+
+			return new ResponseEntity<>( id+ " "+" succesfully deleted!",HttpStatus.NO_CONTENT);
+		}
+
+	}
+
+
+	
 }

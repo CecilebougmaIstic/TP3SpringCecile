@@ -18,6 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -25,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Entity
 @Table
 @DiscriminatorValue("W")
+//@Component
 public class Worker extends User implements Serializable{
 
 	/*Variables*/
@@ -63,6 +66,17 @@ public class Worker extends User implements Serializable{
 
 	public Worker(String firstName, String lastName, String email, String password,String job, String bakRib) {
 		super();
+		this.job = job;
+		this.bakRib = bakRib;
+		this.firstName=firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.password = password;
+	}
+	
+	public Worker(long id,String firstName, String lastName, String email, String password,String job, String bakRib) {
+		super();
+		this.id =id;
 		this.job = job;
 		this.bakRib = bakRib;
 		this.firstName=firstName;
