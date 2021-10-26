@@ -20,4 +20,7 @@ public interface AppointementDao extends JpaRepository <Appointement, Long>{
 public List<Appointement> findAppointementByWorkerId
 (@Param("id") Long id);
 
+@Query(FIND_BY_ID_STATE)
+public List<Appointement> findAppointementByCustomerId(@Param("id") Long id);
+
 }

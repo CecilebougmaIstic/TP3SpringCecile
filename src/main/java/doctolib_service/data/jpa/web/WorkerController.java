@@ -90,7 +90,7 @@ public class WorkerController {
 
 			//workerDao.save(customer);
 			Worker work = workerDao
-					.save(new Worker(worker.getLastName(),worker.getFirstName(), worker.getEmail(),worker.getPassword(),
+					.save(new Worker(worker.getFirstName(),worker.getLastName(), worker.getEmail(),worker.getPassword(),
 							worker.getJob(),worker.getBakRib()));
 			return new ResponseEntity<>(worker, HttpStatus.CREATED);
 		} catch (Exception e) {

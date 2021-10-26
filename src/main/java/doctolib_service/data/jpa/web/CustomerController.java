@@ -97,7 +97,7 @@ public class CustomerController {
 
 			//customerDao.save(customer);
 			Customer cust = customerDao
-					.save(new Customer(customer.getLastName(),customer.getFirstName(), customer.getEmail(),
+					.save(new Customer(customer.getFirstName(),customer.getLastName(), customer.getEmail(),
 							customer.getPassword(),customer.getBankCard()));
 			return new ResponseEntity<>("User succesfully created with id = " +customer.getId(), HttpStatus.CREATED);
 		} catch (Exception e) {
@@ -129,8 +129,8 @@ public class CustomerController {
 	}
 
 
-	/*Delete a customer*/
-	@ApiOperation(value = "Supprimer un Customer par son id ")
+	/*Delete a customer by id*/
+	@ApiOperation(value = "D ")
 	@DeleteMapping("/customers/{id}")
 	
 	public ResponseEntity<String> deleteCustomerById(@PathVariable("id") long id) {

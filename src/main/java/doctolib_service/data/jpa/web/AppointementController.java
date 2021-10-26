@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import doctolib_service.data.jpa.dao.AppointementDao;
+import doctolib_service.data.jpa.dao.CustomerDao;
 import doctolib_service.data.jpa.dao.WorkerDao;
 import doctolib_service.data.jpa.domain.Appointement;
+import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.TypeOfAppointement;
 import doctolib_service.data.jpa.domain.Worker;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +39,8 @@ public class AppointementController {
 	AppointementDao appointementDao;
 	@Autowired
 	WorkerDao workerDao;
+	@Autowired
+	CustomerDao customerDao;
 	/*
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -115,24 +119,23 @@ public class AppointementController {
 
 	/*List of a customer' appointements*/	
 
-	@ApiOperation(value = "Récupère tous les appointements d'un Worker à "
+	@ApiOperation(value = "Récupère tous les appointements d'un Customer à "
 			+ "condition que celui-ci existe dans la base!")
-	@RequestMapping(value="/appointements/customer/{customerId}")
-	public ResponseEntity <List<Appointement>> getAllAppointementsOfCustomer(@PathVariable("workerId") Long workerId)
+	@RequestMapping(value="/appointements/customers/{customerId}")
+	
+	public ResponseEntity <List<Appointement>> getAllAppointementsOfCustomer(@PathVariable("CustomerId") Long customerId)
 	{
 		List<Appointement> appointements = new ArrayList<Appointement>();
-		long recupWorkerId;
+		long recupCustomerId;
 
 
 		try {
-			/*récupérer id de l'utilisateur*/
-			//User recupUser= new User();
-			Optional<Worker> _worker=workerDao.findById(workerId);
-			//recupUserId =recupUser.getId();
+			/*récupérer id du client*/
+			Optional<Customer> _customer=customerDao.findById(customerId);
 			//find in table Appointement, all appointements for a user by his id.		
-			if(_worker.isPresent()) {
+			if(_customer.isPresent()) {
 
-				appointementDao.findAppointementByWorkerId(workerId).forEach(appointements::add);;
+				appointementDao.findAppointementByCustomerId(customerId).forEach(appointements::add);;
 
 			} else
 

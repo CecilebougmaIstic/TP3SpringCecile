@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import doctolib_service.data.jpa.dao.TypeOfAppointementDao;
+import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.TypeOfAppointement;
 import doctolib_service.data.jpa.domain.Worker;
 import io.swagger.annotations.ApiOperation;
@@ -103,22 +104,28 @@ public class TypeOfAppointementController {
 	@ApiOperation(value = "Update TypeOfAppointement by id ")
 	@PutMapping("/typeOfAppointements/{id}")
 	@ResponseBody
-	public String updateTypeOfAppointements(@PathVariable("id") long id, String appointementDescription, int appointementLimit, Worker worker) {
+	public ResponseEntity<TypeOfAppointement> updateTypeOfAppointements(@PathVariable("id") long id, @RequestBody TypeOfAppointement typeOfAppointement) {
 		// Long idWorker;
-		try {
+		Optional<TypeOfAppointement> typeOfAppointementData = typeOfAppointementDao.findById(id);
+		if(typeOfAppointementData.isPresent())
+		{
+			TypeOfAppointement _typeOfAppointement = typeOfAppointementData.get();
+			_typeOfAppointement.setAppointementDescription(typeOfAppointement.getAppointementDescription());
+			_typeOfAppointement.setAppointementLimit(typeOfAppointement.getAppointementLimit());
+			_typeOfAppointement.setId(typeOfAppointement.getId());
+			//_typeOfAppointement.setWorker(typeOfAppointement.getWorker());
+		
+			return new ResponseEntity<>(typeOfAppointementDao.save(_typeOfAppointement), HttpStatus.OK);
 
-			TypeOfAppointement typeOfAppointement = typeOfAppointementDao.findById(id).get();
-			typeOfAppointement.setAppointementDescription(appointementDescription);
-			typeOfAppointement.setAppointementLimit(appointementLimit);
-			typeOfAppointement.setId(id);
-			typeOfAppointement.setWorker(worker);
-			typeOfAppointementDao.save(typeOfAppointement);
-			// idWorker= customer.getId();
-		} catch (Exception ex) {
-			return "Error updating"+ id + ":"  + ex.toString();
-		}
+			
+		}else
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	
+			
+		
 		// return idWorker + " "+ "Worker succesfully updated!";
-		return  id + " " + "succesfully updated!";
+		//return  id + " " + "succesfully updated!";
+		
 	}
 
 	/* Delete a  */

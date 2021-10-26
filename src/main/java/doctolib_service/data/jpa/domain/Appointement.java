@@ -38,17 +38,17 @@ public class Appointement implements Serializable{
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="typeAppointement_id", nullable=false)
-	@JsonManagedReference(value="appointement-typeAppointement")
+	//@JsonManagedReference(value="appointement-typeAppointement")
 	private TypeOfAppointement typeAppointement;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="customer_id", nullable=false)
-	@JsonManagedReference(value="customer-appointement")
+	//@JsonManagedReference(value="customer-appointement")
 	private Customer customer;	
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="worker_id", nullable=false)
-	@JsonManagedReference(value="worker-appointement")
+	//@JsonManagedReference(value="worker-appointement")
 	private Worker worker;
 	
 	/*Construtors*/	

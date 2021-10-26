@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -28,14 +29,15 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import doctolib_service.data.jpa.dao.WorkerDao;
 import doctolib_service.data.jpa.domain.Worker;
 import doctolib_service.data.jpa.web.WorkerController;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,6 +51,7 @@ public class WorkerControllerTest {
 	
 	 @MockBean
 	 private WorkerDao workerDaoForTest;
+	 
 	 
 	@Autowired
 	 private WorkerController workerControllerTest;
@@ -92,46 +95,52 @@ public class WorkerControllerTest {
 		     //assertEquals(1L,workerDaoForTest.findById(1L));
 		    	     }
 @Test
-	  public void whenPostWorkers_thenCreateWorkers_thenReturnJsonArray() throws Exception{
+	  public void whenPostWorkers_thenCreateWorkers_thenReturnJsonArray() throws  IOException, Exception {
 		 
 		   /*Create a list of workers*/
-	        Worker optWorker1 =new Worker(1L,"Alexandrie","djopnk","Gastonbadonnnjjjj@yahoo.fr",
+	        Worker optWorker1 =new Worker("Alexandrie","djopnk","Gastonbadonnnjjjj@yahoo.fr",
 		    		 "12azzeee","MenuisierSoudeur","12assff");
-		 Worker optWorker2= new Worker(2L,"Alex","djopnk","Gastonbadonnnjjjj@yahoo.fr",
-		    		 "12azzeee","MenuisierSoudeur","12assff");
+		 //Worker optWorker2= new Worker(2L,"Alex","djopnk","Gastonbadonnnjjjj@yahoo.fr",
+		    		// "12azzeee","MenuisierSoudeur","12assff");
 	        
-	        Worker optWorker3= new Worker(2L,"Sarah","SaralDupontnio","Gastonbadonnnjjjj@yahoo.fr",
-		    		 "12azzeee","MenuisierSoudeur","12assff");
+	      //  Worker optWorker3= new Worker(2L,"Sarah","SaralDupontnio","Gastonbadonnnjjjj@yahoo.fr",
+		    		// "12azzeee","MenuisierSoudeur","12assff");
 	        
-	        workerDaoForTest.saveAndFlush(optWorker1);
-	        workerDaoForTest.saveAndFlush(optWorker2);
-	        workerDaoForTest.saveAndFlush(optWorker3);
-	        List<Worker> found = workerDaoForTest.findAll();
-	        when (workerDaoForTest.findAll()).thenReturn(found);
-	       
+	        //workerDaoForTest.saveAndFlush(optWorker1);
+	        //workerDaoForTest.save(optWorker1);
+	        System.out.println("--------------------------");
+	        System.out.println(optWorker1.toString());
+	        //System.out.println(workerDaoForTest.save(optWorker1));
+	        System.out.println("------------------------------");
+	        //workerDaoForTest.saveAndFlush(optWorker2);
+	       // workerDaoForTest.saveAndFlush(optWorker3);
+	        //List<Worker> found = workerDaoForTest.findAll();
+	        //when (workerDaoForTest.findAll()).thenReturn(found);
+	        //System.out.println("***********************");
+	        //System.out.println(found);
+	       //System.out.println("**************************");
+	       //.content(JsonUtil.toJson(bob))
 	    
-	       mvc.perform(get("/api/workers")
-	    		   .accept(MediaType.APPLICATION_JSON))
-	     //.andExpect(status().isOk())
+	       mvc.perform(post("/api/workers").contentType(MediaType.APPLICATION_JSON)
+	    		   .content(JsonUtil.toJson(optWorker1)));
+	     //.andExpect(status().isCreated());
 	     //.andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(3))))
-	     .andExpect((MockMvcResultMatchers.jsonPath("$[0].firstName").value(optWorker1.getFirstName())))
-	     .andExpect((MockMvcResultMatchers.jsonPath("$[1].firstName").value(optWorker2.getFirstName())))
-	     .andExpect((MockMvcResultMatchers.jsonPath("$[2].firstName").value(optWorker3.getFirstName())));
-	       
+	    // .andExpect((MockMvcResultMatchers.jsonPath("$[0].firstName").value(optWorker1.getFirstName())))
+	    // .andExpect((MockMvcResultMatchers.jsonPath("$[1].firstName").value(optWorker2.getFirstName())))
+	     //.andExpect((MockMvcResultMatchers.jsonPath("$[2].firstName").value(optWorker3.getFirstName())));
+	       System.out.println("fgghjjkkll");
 	       //testing creating a worker
-	       assertThat(found).extracting(Worker::getFirstName).contains("Alexandrie");
- 
+	       List<Worker> found = workerDaoForTest.findAll();
+	       System.out.println(found);
+	       System.out.println("**************************");
+	       //assertThat(found).extracting(Worker::getFirstName).contains("Alexandrie");
+	       assertThat(found).extracting(Worker::getFirstName).containsOnly("Alexandrie");
 	       //verify(workerDaoForTest, VerificationModeFactory.times(1)).
 	       //reset(workerDaoForTest);
 	        }
 	  
-	  public static String asJsonString(final Object obj) {
-		    try {
-		        return new ObjectMapper().writeValueAsString(obj);
-		    } catch (Exception e) {
-		        throw new RuntimeException(e);
-		    }
-		    }
+	
+		    
 	 /*Create a Worker Data for tests*/ 
 	  
 
@@ -148,7 +157,9 @@ public class WorkerControllerTest {
 	       */  
 	
 	  
-	  @AfterEach
+	 
+
+	@AfterEach
 		public void afterTest() throws Exception {
 		  
 		}
