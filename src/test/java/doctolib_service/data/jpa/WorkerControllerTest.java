@@ -54,7 +54,7 @@ public class WorkerControllerTest {
 	 
 	 
 	@Autowired
-	 private WorkerController workerControllerTest;
+	 //private WorkerController workerControllerTest;
 	 
 	 @Before
 	    public void init() {
@@ -106,10 +106,10 @@ public class WorkerControllerTest {
 	      //  Worker optWorker3= new Worker(2L,"Sarah","SaralDupontnio","Gastonbadonnnjjjj@yahoo.fr",
 		    		// "12azzeee","MenuisierSoudeur","12assff");
 	        
-	        //workerDaoForTest.saveAndFlush(optWorker1);
+	        workerDaoForTest.saveAndFlush(optWorker1);
 	        //workerDaoForTest.save(optWorker1);
 	        System.out.println("--------------------------");
-	        System.out.println(optWorker1.toString());
+	        //System.out.println(optWorker1.toString());
 	        //System.out.println(workerDaoForTest.save(optWorker1));
 	        System.out.println("------------------------------");
 	        //workerDaoForTest.saveAndFlush(optWorker2);
