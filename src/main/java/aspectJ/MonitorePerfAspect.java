@@ -1,15 +1,18 @@
 package aspectJ;
 
-import org.apache.log4j.Logger;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.util.StopWatch;
 
 public class MonitorePerfAspect  implements Ordered{
-	private static Logger logger = Logger.getLogger(MonitorePerfAspect.class);
+	//private static Logger logger = Logger.getLogger(MonitorePerfAspect.class);
+	private Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
 	private int order;
 	
 	 @Around("monitorePerfPointcut()")
