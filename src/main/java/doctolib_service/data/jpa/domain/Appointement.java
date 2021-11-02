@@ -36,12 +36,12 @@ public class Appointement implements Serializable{
 	
 	private String appointementPlace;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="typeAppointement_id", nullable=false)
 	//@JsonManagedReference(value="appointement-typeAppointement")
 	private TypeOfAppointement typeAppointement;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="customer_id", nullable=false)
 	//@JsonManagedReference(value="customer-appointement")
 	private Customer customer;	

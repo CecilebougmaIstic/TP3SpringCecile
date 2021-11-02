@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,12 +23,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import doctolib_service.data.jpa.aspectJ.Supervision;
 import doctolib_service.data.jpa.dao.AppointementDao;
 import doctolib_service.data.jpa.dao.CustomerDao;
 import doctolib_service.data.jpa.dao.WorkerDao;
 import doctolib_service.data.jpa.domain.Appointement;
 import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.TypeOfAppointement;
+import doctolib_service.data.jpa.domain.User;
 import doctolib_service.data.jpa.domain.Worker;
 import io.swagger.annotations.ApiOperation;
 
@@ -114,17 +117,37 @@ public class AppointementController {
 	}
 	
 	
-	
+
+	@GetMapping("/appointements")
+	@ResponseBody
+	public ResponseEntity<List<Appointement>> getAllAppointements() {
+		try {
+			List<Appointement> appointements = new ArrayList<Appointement>();
+
+			
+			appointementDao.findAll().forEach(appointements::add);
+
+			if (appointements.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+			System.out.println("******************"+appointements.get(0).getAppointementStart());
+			return new ResponseEntity<>(appointements, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 
 	/*List of a customer' appointements*/	
 
 	@ApiOperation(value = "Récupère tous les appointements d'un Customer à "
 			+ "condition que celui-ci existe dans la base!")
-	@RequestMapping(value="/appointements/customers/{customerId}")
-	
-	public ResponseEntity <List<Appointement>> getAllAppointementsOfCustomer(@PathVariable("CustomerId") Long customerId)
+	@GetMapping(value="/appointements/customers/{customerId}")
+	@Supervision(dureeMillis = 5)
+	public ResponseEntity <List<Appointement>> getAllAppointementsOfCustomer(@PathVariable("customerId") Long customerId)
 	{
+		System.out.println("réalise un traitement important pour l'application"
+				+"Car affiche tous les Appointements d'un Customer");
 		List<Appointement> appointements = new ArrayList<Appointement>();
 		long recupCustomerId;
 
@@ -134,24 +157,27 @@ public class AppointementController {
 			Optional<Customer> _customer=customerDao.findById(customerId);
 			//find in table Appointement, all appointements for a user by his id.		
 			if(_customer.isPresent()) {
-
-				appointementDao.findAppointementByCustomerId(customerId).forEach(appointements::add);;
-
+				System.out.println("******************");
+			
+				appointementDao.findByCustomer(_customer.get()).forEach(appointements::add);;
+			
+				
+					
+					
 			} else
 
-				throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
+				return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 			if(appointements.isEmpty()) 
 			{
-				throw  new ResponseStatusException(HttpStatus.NOT_FOUND); 
-
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
 
 			}
 
 			return new ResponseEntity<>(appointements, HttpStatus.OK);
 		}
-		catch (Exception ex) {
-			throw  new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+		catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
@@ -169,12 +195,12 @@ public class AppointementController {
 
 			// workerDao.save(customer);
 			System.out.println("ghhdddd");
-			System.out.println(appointement.toString());
+			//System.out.println(appointement.toString());
 
-			/*Appointement _appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementEnd(),
+			Appointement _appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementEnd(),
 					appointement.getAppointementPlace(),appointement.getTypeAppointement(), appointement.getCustomer(),appointement.getWorker()));
-			 */
-			return new ResponseEntity<>(null, HttpStatus.CREATED);
+			 
+			return new ResponseEntity<>(_appointement, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}

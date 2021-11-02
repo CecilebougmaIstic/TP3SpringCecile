@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import doctolib_service.data.jpa.domain.Appointement;
+import doctolib_service.data.jpa.domain.Customer;
 
 
 
@@ -22,5 +23,8 @@ public List<Appointement> findAppointementByWorkerId
 
 @Query(FIND_BY_ID_STATE)
 public List<Appointement> findAppointementByCustomerId(@Param("id") Long id);
+
+public List<Appointement> findByCustomer(Customer customerObject);
+
 
 }
