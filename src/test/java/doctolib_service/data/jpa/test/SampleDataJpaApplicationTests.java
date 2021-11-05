@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package doctolib_service.data.jpa;
+package doctolib_service.data.jpa.test;
 
 import java.lang.management.ManagementFactory;
 

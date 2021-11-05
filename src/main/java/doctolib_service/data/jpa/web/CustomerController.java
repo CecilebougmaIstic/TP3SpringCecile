@@ -22,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import doctolib_service.data.jpa.dao.CustomerDao;
 import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.Worker;
+import doctolib_service.data.jpa.exeption.NotFoundDoctolibExeption;
 import io.swagger.annotations.ApiOperation;
 
 
@@ -45,13 +46,13 @@ public class CustomerController {
 			if(customer.isPresent()) 
 			{
 				return customer.get();
-
 			}
-			throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
-
+			//throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
+			throw new NotFoundDoctolibExeption("User" + id + "est INTROUVABLE");
 		}
 		catch (Exception ex) {
-			throw  new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+			//throw  new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new NotFoundDoctolibExeption("Customer" + id + "est INTROUVABLE");
 		}
 	}
 
@@ -80,14 +81,12 @@ public class CustomerController {
 						else
 							customerDao.findAll().forEach(customers::add);
 			if (customers.isEmpty()) {
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);	
 			}
-
 			return new ResponseEntity<>(customers, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
 	}
 
 	@ApiOperation(value = "Create a customer")
@@ -124,8 +123,8 @@ public class CustomerController {
 			_customer.setBankCard(customer.getBankCard());
 			return new ResponseEntity<>(customerDao.save(_customer), HttpStatus.OK);
 		}else
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
+			//return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		throw new NotFoundDoctolibExeption("Customer" + customer + "n'existe pas en base de donnée.");
 	}
 
 

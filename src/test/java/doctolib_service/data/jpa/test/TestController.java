@@ -1,4 +1,4 @@
-package doctolib_service.data.jpa;
+package doctolib_service.data.jpa.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
@@ -28,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import doctolib_service.data.jpa.SampleDataJpaApplication;
 import doctolib_service.data.jpa.dao.WorkerDao;
 import doctolib_service.data.jpa.domain.Worker;
 

@@ -19,7 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import doctolib_service.data.jpa.dao.UserDao;
+import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.User;
+import doctolib_service.data.jpa.exeption.NotFoundDoctolibExeption;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/api")
@@ -29,7 +32,8 @@ public abstract class UserController {
 	private UserDao userDao;
 	
 	/*Get a user by id*/
-	
+	@ApiOperation(value = "Get a user by his id "
+			+ "condition: if this user exits in base.")
 	@RequestMapping(value="/users/{Id}")
 	@ResponseBody
 	public User getUserById(@PathVariable("Id") Long id)  {
@@ -40,27 +44,37 @@ public abstract class UserController {
 			if(user.isPresent()) 
 			{
 				return user.get();
-
 			}
-			throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
-			
+			//throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
+			throw new NotFoundDoctolibExeption("User" + id + "est INTROUVABLE");
 		}
 		catch (Exception ex) {
 			throw  new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+		
 	}
 	
 	/*Get All users*/
 	
 	@GetMapping("/users")
 	@ResponseBody
-	public ResponseEntity<List<User>> getAllUsers() {
+	public ResponseEntity<List<User>> getAllUsers(@RequestParam(required = false) String lastName,
+			@RequestParam(required = false) String firstName,@RequestParam(required = false) String email) {
+		List<User> users = new ArrayList<User>();
 		try {
-			List<User> users = new ArrayList<User>();
-
-			
-				userDao.findAll().forEach(users::add);
-
+			if (lastName!=null && firstName!=null)
+				userDao.findByLastNameContainingAndFirstNameContaining(lastName,firstName).forEach(users::add);
+			else 
+				if (lastName!=null)
+					userDao.findByLastNameContaining(lastName).forEach(users::add);
+				else
+					if(firstName!=null )
+						userDao.findByFirstNameContaining(firstName).forEach(users::add);
+					else
+						if(email!=null)
+							userDao.findByEmailContaining(email).forEach(users::add);
+						else
+							userDao.findAll().forEach(users::add);
 			if (users.isEmpty()) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
@@ -69,6 +83,7 @@ public abstract class UserController {
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+
 	}
 	
 	

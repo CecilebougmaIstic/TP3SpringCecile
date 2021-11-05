@@ -22,7 +22,8 @@ public class RestClientZimbra {
 	@ApiOperation(value = "Classe de connexion à l'Api Zimbra "
 			+ " pour identifier les plages disponibles pour un utilisateur "
 			+ "donné afin de pouvoir prendre un RDV")
-	public static String doInBackground(String email,String password,String appointementStart,
+	
+	public static String connexionApiZimbra(String email,String password,String appointementStart,
 			String appointementEnd) {
 		
 	    System.out.println("15email_adress=" + email);
@@ -68,11 +69,12 @@ public class RestClientZimbra {
 	        while ((line = bufferedReader.readLine()) != null) {
 	            sb.append(line);
 	        }
-
+	        System.out.println("*******************************");
 	        bufferedReader.close();
 	        result = sb.toString();
+	        System.out.println("*************************Avant Result******");
 	        System.out.println(result);
-
+	        System.out.println("--------------------------------------------");
 	        }else {
 	        //    return new String("false : "+responseCode);
 	        new String("false : "+responseCode);
@@ -82,7 +84,10 @@ public class RestClientZimbra {
 	    }
 	    return null;    
 	}
+	/*
 	public static void main(String[] args) throws Exception {
-		doInBackground("cecile.bougma@etudiant.univ-rennes1.fr", "Istic.1522","2021/11/04","2021/11/04");
-	}
+		connexionApiZimbra("cecile.bougma@etudiant.univ-rennes1.fr", "Istic.1522","20211105T000000","20211105T000000");
+		//"cecile.bougma@etudiant.univ-rennes1.fr", "Istic.1522","milliseconds |2021/11/04| 11/04/2021","milliseconds |2021/11/04| 11/04/2021"
+		//2021/04/11
+	}*/
 }

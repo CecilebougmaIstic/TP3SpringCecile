@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 import doctolib_service.data.jpa.dao.WorkerDao;
 import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.Worker;
+import doctolib_service.data.jpa.exeption.NotFoundDoctolibExeption;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -104,8 +105,6 @@ public class WorkerController {
 	@PutMapping("/workers/{id}")
 	@ResponseBody
 
-	
-
 	public ResponseEntity<Worker> updateWorker(@PathVariable("id") long id, @RequestBody  Worker worker) {
 		//Long idWorker;
 		
@@ -121,7 +120,7 @@ public class WorkerController {
 			
 			return new ResponseEntity<>(workerDao.save(_worker), HttpStatus.OK);
 			}else
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				throw new NotFoundDoctolibExeption("Customer" + worker + "n'existe pas en base de donnée.");
 
 	}
 

@@ -1,4 +1,4 @@
-package doctolib_service.data.jpa;
+package doctolib_service.data.jpa.test;
 
 import java.io.IOException;
 import com.fasterxml.jackson.annotation.JsonInclude;
