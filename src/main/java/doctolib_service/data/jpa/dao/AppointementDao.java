@@ -1,6 +1,8 @@
 package doctolib_service.data.jpa.dao;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,5 +28,11 @@ public List<Appointement> findAppointementByCustomerId(@Param("id") Long id);
 
 public List<Appointement> findByCustomer(Customer customerObject);
 
+@Query("select a from Appointement a where "
+		+ "((a.appointementStart BETWEEN :appointementStart AND :appointementEnd) OR"
+		+"(a.appointementEnd BETWEEN :appointementStart AND :appointementEnd))"
+		+ "and a.worker.id=:workerId")
+//"select a from Appointement a where a.appointementStart = :appointementStart and a.worker.id=:workerId"
+public Optional<Appointement> appointementAlreadyExistForAWorker(@Param("appointementStart") Date appointementStart, @Param("appointementEnd") Date appointementEnd, @Param("workerId") Long workerId);
 
 }

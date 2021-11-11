@@ -37,7 +37,7 @@ public class Worker extends User implements Serializable{
 	private String job;
 	private String bakRib;
 
-	@OneToMany(fetch = FetchType.EAGER,mappedBy = "worker", cascade = CascadeType.PERSIST)
+	@OneToMany(fetch = FetchType.EAGER,mappedBy = "worker", cascade = { CascadeType.PERSIST, CascadeType.REMOVE})
 	@ElementCollection
 	//@JsonManagedReference(value="worker-typeOfAppointement")
 	private List<TypeOfAppointement> typeAppointements = new ArrayList<TypeOfAppointement>();

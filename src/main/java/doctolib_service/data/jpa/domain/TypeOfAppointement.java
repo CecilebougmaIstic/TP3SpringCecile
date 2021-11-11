@@ -38,7 +38,8 @@ public class TypeOfAppointement implements Serializable{
 	@JsonBackReference(value="worker-typeOfAppointement") //ignore
 	private Worker worker;
 	
-	@OneToMany(fetch = FetchType.LAZY,mappedBy = "typeAppointement", cascade = CascadeType.PERSIST)
+	@OneToMany(fetch = FetchType.LAZY,mappedBy = "typeAppointement",
+			cascade = { CascadeType.PERSIST, CascadeType.REMOVE})
 	@ElementCollection
 	@JsonBackReference(value="appointement-typeAppointement")
 	private List<Appointement> appointement = new ArrayList<Appointement>();	

@@ -1,5 +1,13 @@
 package doctolib_service.data.jpa.web;
+
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +29,7 @@ import doctolib_service.data.jpa.dao.WorkerDao;
 import doctolib_service.data.jpa.domain.Appointement;
 import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.Worker;
+import doctolib_service.data.jpa.exeption.AlreadyExistDoctolibExeption;
 import doctolib_service.data.jpa.exeption.NotFoundDoctolibExeption;
 import doctolib_service.data.jpa.utils.RestClientZimbra;
 import io.swagger.annotations.ApiOperation;
@@ -143,14 +152,63 @@ public class AppointementController {
 	@PostMapping("/appointements")
 
 	public ResponseEntity<Appointement> createAppointement(@RequestBody  Appointement appointement) {
-		try {
-			Appointement _appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementEnd(),
-					appointement.getAppointementPlace(),appointement.getTypeAppointement(), appointement.getCustomer(),appointement.getWorker()));
+		Appointement _appointement=null ;
+		Worker workerData=null;
+		Optional<Worker> _worker=workerDao.findById(appointement.getWorker().getId());
+		if(!_worker.isPresent()) 
+		{
+			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST );
 
-			return new ResponseEntity<>(_appointement, HttpStatus.CREATED);
-		} catch (Exception e) {
+		}else
+			workerData=_worker.get();
+
+
+		if(appointementDao.appointementAlreadyExistForAWorker(appointement.getAppointementStart(), appointement.getAppointementEnd(),appointement.getWorker().getId()).isPresent())
+		{
+			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST );
+		}
+		/*Contrôle au niveau de Zimbra*/
+		LocalDateTime dateEnd = convertToLocalDateTimeViaInstant(appointement.getAppointementStart()).plusDays(1);
+		Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+		String datePourZimbraStart = formatter.format(appointement.getAppointementStart());
+
+		String datePourZimbraEnd = dateEnd.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));;
+		formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String dateAppointementStart = formatter.format(appointement.getAppointementStart());
+	
+		String dateAppointementEnd = formatter.format(appointement.getAppointementEnd());
+		
+		try {
+			//tecupère les rdv dans zimbra sur une tranche d'une journée par rapport (au jour) du rdv souhaité
+			String json=RestClientZimbra.connexionApiZimbra(workerData.getEmail(), workerData.getPassword(),datePourZimbraStart,datePourZimbraEnd);
+			
+			boolean accept=false;
+			//s'il existe des rdv dans zimbra pour ce jour là
+			if(!json.equals("{}")) {
+				//vérifier que les horaires sont disponible
+				
+				accept=RestClientZimbra.acceptReservation(json,dateAppointementStart,dateAppointementEnd);
+			}else
+				accept=true;
+			//si horaire dispo
+			if(accept==true) {
+				
+				_appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementEnd(),
+						appointement.getAppointementPlace(),appointement.getTypeAppointement(), appointement.getCustomer(),appointement.getWorker()));
+				return new ResponseEntity<>(_appointement, HttpStatus.CREATED);
+
+			}
+			else 	//horaire non disponible dans zimbra		
+				return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST );
+		}
+		catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+	public LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
+	    return dateToConvert.toInstant()
+	      .atZone(ZoneId.systemDefault())
+	      .toLocalDateTime();
 	}
 
 	/*Delete all Appointments*/
