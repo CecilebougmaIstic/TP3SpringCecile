@@ -8,13 +8,28 @@ import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Base64;
+import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+
 import doctolib_service.data.jpa.SampleDataJpaApplication;
+import doctolib_service.data.jpa.utils.model.Appt;
+import doctolib_service.data.jpa.utils.model.Root;
 import io.swagger.annotations.ApiOperation;
 
 public class RestClientZimbra {
@@ -75,6 +90,10 @@ public class RestClientZimbra {
 	        System.out.println("*************************Avant Result******");
 	        System.out.println(result);
 	        System.out.println("--------------------------------------------");
+	       
+	        return result;
+	        //System.out.println(root.getAppt().get(0).getInv().get(0).getComp().get(0).getS().get(0).getD());
+
 	        }else {
 	        //    return new String("false : "+responseCode);
 	        new String("false : "+responseCode);
@@ -84,10 +103,47 @@ public class RestClientZimbra {
 	    }
 	    return null;    
 	}
-	/*
+	
+	public static boolean acceptReservation(String json, String start,String end) throws JsonParseException, JsonMappingException, IOException, ParseException
+	{
+		 ObjectMapper mapper = new ObjectMapper() .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);;
+	       	        
+	        Root root= mapper.readValue(json, Root.class);
+	        for (Appt item:root.getAppt())
+	        {
+	        	System.out.println("****RDV******");
+	        	//Date rdvStart=new SimpleDateFormat("yyyyMMddThhMMss").parse(item.getInv().get(0).getComp().get(0).getS().get(0).getD());  
+	        	//Date rdvEnd=new SimpleDateFormat("yyyyMMddThhMMss").parse(item.getInv().get(0).getComp().get(0).getE().get(0).getD());  
+		       Long rdvStart=convertToLong(item.getInv().get(0).getComp().get(0).getS().get(0).getD());
+		       Long rdvEnd=convertToLong(item.getInv().get(0).getComp().get(0).getE().get(0).getD());
+		       Long rdvWhishStart=convertToLong(start);
+		       Long rdvWhishEnd=convertToLong(end);	       
+		       if((rdvWhishStart>=rdvStart && rdvWhishStart<rdvEnd)|| 
+		    		   (rdvWhishEnd>rdvStart && rdvWhishEnd<=rdvEnd)||
+		    		   (rdvWhishStart<rdvStart && rdvWhishEnd>=rdvEnd)||
+		    		   (rdvWhishStart>=rdvStart && rdvWhishEnd<=rdvEnd))
+		    	   return false;
+	        }
+			return true;
+	        
+	        
+	}
+	
+	private static long convertToLong(String date) 
+	{
+		
+		return Long.parseLong(date.replace(" ", "").replace(":", "").replace("-", "").replace("T", ""));
+	}
+	
+	
+	
 	public static void main(String[] args) throws Exception {
-		connexionApiZimbra("cecile.bougma@etudiant.univ-rennes1.fr", "Istic.1522","20211105T000000","20211105T000000");
+		String json=connexionApiZimbra("cecile.bougma@etudiant.univ-rennes1.fr", "Istic.1522","2021/11/05","2021/11/06");
 		//"cecile.bougma@etudiant.univ-rennes1.fr", "Istic.1522","milliseconds |2021/11/04| 11/04/2021","milliseconds |2021/11/04| 11/04/2021"
 		//2021/04/11
-	}*/
+    	Date start=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2021-11-05 12:00:00");  
+    	Date end=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2021-11-05 12:30:00");  
+
+		System.out.println(acceptReservation(json,"2021-11-05 11:00:00","2021-11-05 12:00:00"));
+	}
 }

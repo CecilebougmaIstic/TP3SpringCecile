@@ -21,6 +21,8 @@ import doctolib_service.data.jpa.dao.WorkerDao;
 import doctolib_service.data.jpa.domain.Appointement;
 import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.Worker;
+import doctolib_service.data.jpa.exeption.NotFoundDoctolibExeption;
+import doctolib_service.data.jpa.utils.RestClientZimbra;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -116,25 +118,19 @@ public class AppointementController {
 	{
 		System.out.println("réalise un traitement important pour l'application"
 				+"Car affiche tous les Appointements d'un Customer");
-		List<Appointement> appointements = new ArrayList<Appointement>();
-	
+		List<Appointement> appointements = new ArrayList<Appointement>();	
 		try {
 			/*recuperate customer id*/
 			Optional<Customer> _customer=customerDao.findById(customerId);
 			//find in table Appointment, all appointments for a user by his id.		
 			if(_customer.isPresent()) {
-
 				appointementDao.findByCustomer(_customer.get()).forEach(appointements::add);			
 			} else
-
 				return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
 			if(appointements.isEmpty()) 
 			{
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
-
 			}
-
 			return new ResponseEntity<>(appointements, HttpStatus.OK);
 		}
 		catch (Exception e) {
@@ -142,8 +138,6 @@ public class AppointementController {
 		}
 	}
 
-
-	/*Create an Appointment by a Customer */
 
 	@ApiOperation(value = "Create an Appointement")
 	@PostMapping("/appointements")
@@ -158,7 +152,6 @@ public class AppointementController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
 
 	/*Delete all Appointments*/
 	@ApiOperation(value = "delete all appointements ")
@@ -182,7 +175,8 @@ public class AppointementController {
 	public ResponseEntity<String> deleteAppointementById(@PathVariable("id") long id) {
 		Optional<Appointement> appointementToDelete = appointementDao.findById(id);
 		if (!appointementToDelete.isPresent()) {
-			return new ResponseEntity<>("Error deleting:"+" "+ id,HttpStatus.NOT_FOUND);
+			//return new ResponseEntity<>("Error deleting:"+" "+ id,HttpStatus.NOT_FOUND);
+			throw new NotFoundDoctolibExeption("Error deleting:"+" "+ id,"le RDV n'existe pas en base de donnée.");
 		}else { 
 			appointementDao.deleteById(id);
 			return new ResponseEntity<>( id+ " "+" succesfully deleted!",HttpStatus.NO_CONTENT);

@@ -98,7 +98,7 @@ public class CustomerController {
 			Customer cust = customerDao
 					.save(new Customer(customer.getFirstName(),customer.getLastName(), customer.getEmail(),
 							customer.getPassword(),customer.getBankCard()));
-			return new ResponseEntity<>("User succesfully created with id = " +customer.getId(), HttpStatus.CREATED);
+			return new ResponseEntity<>("User succesfully created with id = " +cust.getId(), HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>("Error creating the user: "+" "+customer.getId(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -135,7 +135,7 @@ public class CustomerController {
 	public ResponseEntity<String> deleteCustomerById(@PathVariable("id") long id) {
 		Optional<Customer> customerData = customerDao.findById(id);
 		if (!customerData.isPresent()) {
-			return new ResponseEntity<>("Error deleting:"+" "+ id,HttpStatus.NOT_FOUND);
+			throw new NotFoundDoctolibExeption("Error deleting:"+" "+ id,"worker n'existe pas en base de donnée.");
 		}else { 
 			customerDao.deleteById(id);
 			return new ResponseEntity<>( id+ " "+" succesfully deleted!",HttpStatus.NO_CONTENT);

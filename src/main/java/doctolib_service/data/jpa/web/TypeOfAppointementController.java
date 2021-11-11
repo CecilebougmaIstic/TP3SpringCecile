@@ -23,6 +23,7 @@ import doctolib_service.data.jpa.dao.TypeOfAppointementDao;
 import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.TypeOfAppointement;
 import doctolib_service.data.jpa.domain.Worker;
+import doctolib_service.data.jpa.exeption.NotFoundDoctolibExeption;
 import io.swagger.annotations.ApiOperation;
 
 
@@ -90,8 +91,6 @@ public class TypeOfAppointementController {
 	public ResponseEntity<TypeOfAppointement> createTypeOfAppointement(@RequestBody TypeOfAppointement typeOfAppointement) {
 		try {
 
-			// workerDao.save(customer);
-	
 			TypeOfAppointement _typeOfAppointement = typeOfAppointementDao.save(new TypeOfAppointement(typeOfAppointement.getAppointementDescription(), typeOfAppointement.getAppointementLimit(), 
 					typeOfAppointement.getWorker()));
 			return new ResponseEntity<>(_typeOfAppointement, HttpStatus.CREATED);
@@ -128,18 +127,27 @@ public class TypeOfAppointementController {
 		
 	}
 
-	/* Delete a  */
+	/* Delete an TypeOfAppointement By his id  */
 	@ApiOperation(value = "Delete a TypeOfAppointement by id ")
 	@DeleteMapping("/typeOfAppointements/{id}")
-	public ResponseEntity<HttpStatus> deleteTypeOfAppointementById(@PathVariable("id") long id) {
-		try {
+	public ResponseEntity<String> deleteTypeOfAppointementById(@PathVariable("id") long id) throws NotFoundDoctolibExeption {
+		Optional<TypeOfAppointement> typeOfAppointementData = typeOfAppointementDao.findById(id);
+		
+		if (!typeOfAppointementData.isPresent()) {
+			//return new ResponseEntity<>("Error deleting:"+" "+ id,HttpStatus.NOT_FOUND);
+			throw new NotFoundDoctolibExeption("Error deleting:"+" "+ "TypeOfAppointement" + " "+ 
+					id+ "n'existe pas en base de donnée.");
+		}else { 
 			typeOfAppointementDao.deleteById(id);
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		
+			return new ResponseEntity<>( id+ " "+" succesfully deleted!",HttpStatus.NO_CONTENT);
+		}			
 	}
-
+	
+			
+	
+	
+	
 	/* Delete all TypeOfAppointements */
 	@ApiOperation(value = "Delete allTypeOfAppointement by id ")
 	@DeleteMapping("/typeOfAppointements")

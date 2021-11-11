@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import doctolib_service.data.jpa.aspectJ.Supervision;
 import doctolib_service.data.jpa.dao.WorkerDao;
 import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.Worker;
@@ -120,10 +121,9 @@ public class WorkerController {
 			
 			return new ResponseEntity<>(workerDao.save(_worker), HttpStatus.OK);
 			}else
-				throw new NotFoundDoctolibExeption("Customer" + worker + "n'existe pas en base de donnée.");
+				throw new NotFoundDoctolibExeption("worker" + worker + "n'existe pas en base de donnée.");
 
 	}
-
 
 	/*Delete a worker*/
 	@ApiOperation(value = "delete a Worker by id ")
@@ -131,7 +131,8 @@ public class WorkerController {
 	public ResponseEntity<String> deleteWorkerById(@PathVariable("id") long id) {
 		Optional<Worker> workerData = workerDao.findById(id);
 		if (!workerData.isPresent()) {
-			return new ResponseEntity<>("Error deleting:"+" "+ id,HttpStatus.NOT_FOUND);
+			//return new ResponseEntity<>("Error deleting:"+" "+ id,HttpStatus.NOT_FOUND);
+			throw new NotFoundDoctolibExeption("Error deleting:"+" "+ id,"worker n'existe pas en base de donnée.");
 		}else { 
 			workerDao.deleteById(id);
 		
@@ -139,7 +140,7 @@ public class WorkerController {
 		}
 		
 	}
-
+	@Supervision(dureeMillis = 5)
 	/*Delete all workers*/
 	@ApiOperation(value = "delete all workers ")
 	@DeleteMapping("/workers")
