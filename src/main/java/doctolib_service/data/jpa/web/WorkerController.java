@@ -47,7 +47,7 @@ public class WorkerController {
 		if (worker.isPresent()) {
 			return new ResponseEntity<>(worker.get(), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			throw new NotFoundDoctolibExeption("Worker with identification number" + " " + id+ " " + "doesn't exist:"+ " " + "in data base");
 		}
 		
 	}
@@ -132,7 +132,7 @@ public class WorkerController {
 		Optional<Worker> workerData = workerDao.findById(id);
 		if (!workerData.isPresent()) {
 			//return new ResponseEntity<>("Error deleting:"+" "+ id,HttpStatus.NOT_FOUND);
-			throw new NotFoundDoctolibExeption("Error deleting:"+" "+ id,"worker n'existe pas en base de donnée.");
+			throw new NotFoundDoctolibExeption("Error deleting:"+" "+ id+ " "+"worker n'existe pas en base de donnée.");
 		}else { 
 			workerDao.deleteById(id);
 		

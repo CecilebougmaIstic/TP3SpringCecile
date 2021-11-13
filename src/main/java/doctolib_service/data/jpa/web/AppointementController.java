@@ -30,6 +30,7 @@ import doctolib_service.data.jpa.domain.Appointement;
 import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.Worker;
 import doctolib_service.data.jpa.exeption.AlreadyExistDoctolibExeption;
+import doctolib_service.data.jpa.exeption.DoctolibSServiceExceptionResponse;
 import doctolib_service.data.jpa.exeption.NotFoundDoctolibExeption;
 import doctolib_service.data.jpa.utils.RestClientZimbra;
 import io.swagger.annotations.ApiOperation;
@@ -67,10 +68,11 @@ public class AppointementController {
 	/*Get all appointments of a worker*/
 	/*List of a worker appointments*/	
 
+	@SuppressWarnings("unchecked")
 	@ApiOperation(value = "Récupère tous les appointements d'un Worker à "
 			+ "condition que celui-ci existe dans la base!")
 	@RequestMapping(value="/appointements/workers/{workerId}")
-	public ResponseEntity <List<Appointement>> getAllAppointementsOfWorker(@PathVariable("workerId") Long workerId)
+	public ResponseEntity <?> getAllAppointementsOfWorker(@PathVariable("workerId") Long workerId)
 	{
 		List<Appointement> appointements = new ArrayList<Appointement>();
 
@@ -79,19 +81,25 @@ public class AppointementController {
 			if(_worker.isPresent()) {
 
 				appointementDao.findAppointementByWorkerId(workerId).forEach(appointements::add);;
-			} else
+			} else {
+				DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse("This Worker doesn't exist",HttpStatus.NOT_FOUND.value());
 
-				throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
+				 return new ResponseEntity<>(MessageError,HttpStatus.NOT_FOUND);
+			}
 
 			if(appointements.isEmpty()) 
 			{
-				throw  new ResponseStatusException(HttpStatus.NOT_FOUND); 
+				//throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
+				DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse("No appointements");
+				return new ResponseEntity<>(MessageError,HttpStatus.NOT_FOUND);
 			}
 
 			return new ResponseEntity<>(appointements, HttpStatus.OK);
 		}
 		catch (Exception ex) {
-			throw  new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+			DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse("Liste est vide", ex.toString());
+		 return new ResponseEntity<>(MessageError,HttpStatus.INTERNAL_SERVER_ERROR);
+		
 		}
 	}
 
@@ -99,23 +107,24 @@ public class AppointementController {
 
 	@GetMapping("/appointements")
 	@ResponseBody
-	public ResponseEntity<List<Appointement>> getAllAppointements() {
-		try {
+	public ResponseEntity <?> getAllAppointements() {	
+		
+		try {	
 			List<Appointement> appointements = new ArrayList<Appointement>();
-
-
+			
 			appointementDao.findAll().forEach(appointements::add);
-
 			if (appointements.isEmpty()) {
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				DoctolibSServiceExceptionResponse error= new DoctolibSServiceExceptionResponse("Liste est vide");
+				return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
 			}
+
 			//System.out.println("******************"+appointements.get(0).getAppointementStart());
 			return new ResponseEntity<>(appointements, HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse("Liste est vide", e.toString());
+			return new ResponseEntity<>(MessageError, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
 
 	/*List of a customer appointments*/	
 
@@ -185,7 +194,7 @@ public class AppointementController {
 			boolean accept=false;
 			//s'il existe des rdv dans zimbra pour ce jour là
 			if(!json.equals("{}")) {
-				//vérifier que les horaires sont disponible
+				//vérifier que les horaires sont disponibles
 				
 				accept=RestClientZimbra.acceptReservation(json,dateAppointementStart,dateAppointementEnd);
 			}else
@@ -205,6 +214,7 @@ public class AppointementController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
 	public LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
 	    return dateToConvert.toInstant()
 	      .atZone(ZoneId.systemDefault())

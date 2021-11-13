@@ -1,4 +1,4 @@
-package doctolib_service.data.jpa.test;
+package doctolib_service.data.jpa.test.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,6 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import doctolib_service.data.jpa.dao.WorkerDao;
 import doctolib_service.data.jpa.domain.Worker;
+import doctolib_service.data.jpa.test.JsonUtil;
 import doctolib_service.data.jpa.web.WorkerController;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 @RunWith(SpringRunner.class)

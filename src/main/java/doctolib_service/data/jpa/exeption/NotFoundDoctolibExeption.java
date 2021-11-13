@@ -10,6 +10,7 @@ public class NotFoundDoctolibExeption extends RuntimeException {
 	 */
 	private static final long serialVersionUID = 1L;
 	private String messagePersonalise;
+	
 
 	public NotFoundDoctolibExeption() {
 		super();
