@@ -6,57 +6,61 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class DoctolibSServiceExceptionResponse {
 	
 	private String message;
-	//private String exception;
-	private int exeptionResponse;
+	private int codeError;
 	private String exception;
 	
-	public int getExeptionResponse() {
-		return exeptionResponse;
-	}
-
-	public void setExeptionResponse(int exeptionResponse) {
-		this.exeptionResponse = exeptionResponse;
-	}
-
-	public DoctolibSServiceExceptionResponse() {
+	/*Constructors*/
+	
+	public DoctolibSServiceExceptionResponse() {}
+	
+	public DoctolibSServiceExceptionResponse(String message, int codeError) {
 		super();
-		// TODO Auto-generated constructor stub
+		this.message = message;
+		this.codeError = codeError;
 	}
-
+	
 	public DoctolibSServiceExceptionResponse(String message) {
 		super();
 		this.message = message;
-	}
+		}
 
+	public DoctolibSServiceExceptionResponse(String message, int codeError, String exception) {
+		super();
+		this.message = message;
+		this.codeError = codeError;
+		this.exception = exception;
+	}
+	
 	public DoctolibSServiceExceptionResponse(String message, String exception) {
 		super();
 		this.message = message;
 		this.exception = exception;
 	}
+	
+	/**/
+	
+	public String messageNotFoundOrEmpty(String message, int exeptionResponse) {
+		return  message +exeptionResponse ;
+	}
 
 
-	public DoctolibSServiceExceptionResponse(String message, int exeptionResponse, String exception) {
-		super();
-		this.message = message;
-		this.exeptionResponse = exeptionResponse;
-		this.exception = exception;
-	}
+		/*Getters & Setters*/
 	
-	public DoctolibSServiceExceptionResponse(String message, int exeptionResponse) {
-		super();
-		this.message = message;
-		this.exeptionResponse = exeptionResponse;
-		
-	}
-	
-	
-	
+
 	public String getMessage() {
 		return message;
 	}
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public int getCodeError() {
+		return codeError;
+	}
+
+	public void setCodeError(int codeError) {
+		this.codeError = codeError;
 	}
 
 	public String getException() {
@@ -67,12 +71,13 @@ public class DoctolibSServiceExceptionResponse {
 		this.exception = exception;
 	}
 
-	@Override
-	public String toString() {
-		return "DoctolibSServiceExceptionResponse [message=" + message + ", exeptionResponse=" + exeptionResponse
-				+ ", exception=" + exception + "]";
-	}
 
+
+
+	
+
+
+	
 
 
 }

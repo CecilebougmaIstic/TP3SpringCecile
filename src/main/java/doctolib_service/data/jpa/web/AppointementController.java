@@ -25,9 +25,11 @@ import org.springframework.web.server.ResponseStatusException;
 import doctolib_service.data.jpa.aspectJ.Supervision;
 import doctolib_service.data.jpa.dao.AppointementDao;
 import doctolib_service.data.jpa.dao.CustomerDao;
+import doctolib_service.data.jpa.dao.TypeOfAppointementDao;
 import doctolib_service.data.jpa.dao.WorkerDao;
 import doctolib_service.data.jpa.domain.Appointement;
 import doctolib_service.data.jpa.domain.Customer;
+import doctolib_service.data.jpa.domain.TypeOfAppointement;
 import doctolib_service.data.jpa.domain.Worker;
 import doctolib_service.data.jpa.exeption.AlreadyExistDoctolibExeption;
 import doctolib_service.data.jpa.exeption.DoctolibSServiceExceptionResponse;
@@ -45,6 +47,8 @@ public class AppointementController {
 	WorkerDao workerDao;
 	@Autowired
 	CustomerDao customerDao;
+	@Autowired
+	TypeOfAppointementDao typeOfApppointementDao;
 
 	/*Get an appointment by id*/
 	@ApiOperation(value = "Récupère un Appointement grâce à son ID à "
@@ -65,8 +69,10 @@ public class AppointementController {
 		}
 	}
 
-	/*Get all appointments of a worker*/
-	/*List of a worker appointments*/	
+	/*Get all appointments of a one worker 
+	 * @param workerId
+	 *  */
+	
 
 	@SuppressWarnings("unchecked")
 	@ApiOperation(value = "Récupère tous les appointements d'un Worker à "
@@ -74,6 +80,7 @@ public class AppointementController {
 	@RequestMapping(value="/appointements/workers/{workerId}")
 	public ResponseEntity <?> getAllAppointementsOfWorker(@PathVariable("workerId") Long workerId)
 	{
+		DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse();
 		List<Appointement> appointements = new ArrayList<Appointement>();
 
 		try {
@@ -82,23 +89,24 @@ public class AppointementController {
 
 				appointementDao.findAppointementByWorkerId(workerId).forEach(appointements::add);;
 			} else {
-				DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse("This Worker doesn't exist",HttpStatus.NOT_FOUND.value());
-
-				 return new ResponseEntity<>(MessageError,HttpStatus.NOT_FOUND);
+				DoctolibSServiceExceptionResponse MessageError1= new DoctolibSServiceExceptionResponse("This Worker doesn't exist",HttpStatus.NOT_FOUND.value());
+				//String Message=MessageError.messageNotFoundOrEmpty("This Worker doesn't exist",HttpStatus.NOT_FOUND.value());
+				 return new ResponseEntity<>(MessageError1,HttpStatus.NOT_FOUND);
 			}
 
 			if(appointements.isEmpty()) 
 			{
 				//throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
-				DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse("No appointements");
-				return new ResponseEntity<>(MessageError,HttpStatus.NOT_FOUND);
+			String appointementEmptyMess= MessageError.messageNotFoundOrEmpty("No appointements", HttpStatus.NOT_FOUND.value());
+				return new ResponseEntity<>(appointementEmptyMess,HttpStatus.NOT_FOUND);
 			}
 
 			return new ResponseEntity<>(appointements, HttpStatus.OK);
 		}
 		catch (Exception ex) {
-			DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse("Liste est vide", ex.toString());
-		 return new ResponseEntity<>(MessageError,HttpStatus.INTERNAL_SERVER_ERROR);
+			DoctolibSServiceExceptionResponse ErrorMess= new DoctolibSServiceExceptionResponse(ex.toString());
+			
+		 return new ResponseEntity<>(ErrorMess,HttpStatus.INTERNAL_SERVER_ERROR);
 		
 		}
 	}
@@ -106,7 +114,7 @@ public class AppointementController {
 
 
 	@GetMapping("/appointements")
-	@ResponseBody
+	@ResponseBody	
 	public ResponseEntity <?> getAllAppointements() {	
 		
 		try {	
@@ -121,18 +129,22 @@ public class AppointementController {
 			//System.out.println("******************"+appointements.get(0).getAppointementStart());
 			return new ResponseEntity<>(appointements, HttpStatus.OK);
 		} catch (Exception e) {
-			DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse("Liste est vide", e.toString());
+			DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse(e.toString());
 			return new ResponseEntity<>(MessageError, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
-	/*List of a customer appointments*/	
+	/*List of appointments for a one customer */	
 
 	@ApiOperation(value = "Récupère tous les appointements d'un Customer à "
 			+ "condition que celui-ci existe dans la base!")
+	
 	@GetMapping(value="/appointements/customers/{customerId}")
+	@ResponseBody
+	
 	@Supervision(dureeMillis = 5)
-	public ResponseEntity <List<Appointement>> getAllAppointementsOfCustomer(@PathVariable("customerId") Long customerId)
+	
+	public ResponseEntity <?> getAllAppointementsOfCustomer(@PathVariable("customerId") Long customerId)
 	{
 		System.out.println("réalise un traitement important pour l'application"
 				+"Car affiche tous les Appointements d'un Customer");
@@ -152,30 +164,72 @@ public class AppointementController {
 			return new ResponseEntity<>(appointements, HttpStatus.OK);
 		}
 		catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			//DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse(e.toString());
+			return new ResponseEntity<>(e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 
 	@ApiOperation(value = "Create an Appointement")
 	@PostMapping("/appointements")
-
-	public ResponseEntity<Appointement> createAppointement(@RequestBody  Appointement appointement) {
+	@ResponseBody
+	public ResponseEntity<?> createAppointement(@RequestBody  Appointement appointement) {
 		Appointement _appointement=null ;
 		Worker workerData=null;
+		Customer custumerData = null;
+		TypeOfAppointement typeOfApppointementData =null;
+		DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse();
+		
+		/*Verify if a Customer exists*/
+		Optional<Customer> _customer=customerDao.findById(appointement.getCustomer().getId());
+		
+		if(!_customer.isPresent()) {
+		
+			String Message=MessageError.messageNotFoundOrEmpty("This Customer doesn't exist",HttpStatus.NOT_FOUND.value());
+			//return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST );
+			return new ResponseEntity<>(Message,HttpStatus.BAD_REQUEST );
+
+		}else
+			custumerData=_customer.get();
+		
+		/*Verify if a Worker exists*/
 		Optional<Worker> _worker=workerDao.findById(appointement.getWorker().getId());
-		if(!_worker.isPresent()) 
-		{
-			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST );
+		
+		if(!_worker.isPresent()) {
+		
+			String Message=MessageError.messageNotFoundOrEmpty("This Worker doesn't exist",HttpStatus.NOT_FOUND.value());
+			//return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST );
+			return new ResponseEntity<>(Message,HttpStatus.BAD_REQUEST );
 
 		}else
 			workerData=_worker.get();
+		
+		/*Verify if a TypeOfAppointement exists*/
+		Optional<TypeOfAppointement> _typeOfApppointement=typeOfApppointementDao.findById(appointement.getCustomer().getId());
+		
+		if(!_typeOfApppointement.isPresent()) {
+		
+			String Message=MessageError.messageNotFoundOrEmpty("This kind of typeOfApppointement doesn't exist",HttpStatus.NOT_FOUND.value());
+			//return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST );
+			return new ResponseEntity<>(Message,HttpStatus.BAD_REQUEST );
 
-
+		}else
+			typeOfApppointementData=_typeOfApppointement.get();
+		
+		
+		
+				/*Don't allowed to create an appointment in past*/
+		
+		/*************************************************************/
+		
+		/***************************/
+			/*Verify that this appointment is allow to registered*/
 		if(appointementDao.appointementAlreadyExistForAWorker(appointement.getAppointementStart(), appointement.getAppointementEnd(),appointement.getWorker().getId()).isPresent())
 		{
-			return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST );
+			return new ResponseEntity<>("This appointement is not disponible",HttpStatus.BAD_REQUEST );
 		}
+		
+		
 		/*Contrôle au niveau de Zimbra*/
 		LocalDateTime dateEnd = convertToLocalDateTimeViaInstant(appointement.getAppointementStart()).plusDays(1);
 		Format formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -188,7 +242,7 @@ public class AppointementController {
 		String dateAppointementEnd = formatter.format(appointement.getAppointementEnd());
 		
 		try {
-			//tecupère les rdv dans zimbra sur une tranche d'une journée par rapport (au jour) du rdv souhaité
+			//On récupère les rdv dans zimbra sur une tranche d'une journée par rapport (au jour) du rdv souhaité
 			String json=RestClientZimbra.connexionApiZimbra(workerData.getEmail(), workerData.getPassword(),datePourZimbraStart,datePourZimbraEnd);
 			
 			boolean accept=false;
@@ -199,7 +253,7 @@ public class AppointementController {
 				accept=RestClientZimbra.acceptReservation(json,dateAppointementStart,dateAppointementEnd);
 			}else
 				accept=true;
-			//si horaire dispo
+			//si horaire disponible
 			if(accept==true) {
 				
 				_appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementEnd(),
@@ -207,11 +261,14 @@ public class AppointementController {
 				return new ResponseEntity<>(_appointement, HttpStatus.CREATED);
 
 			}
-			else 	//horaire non disponible dans zimbra		
-				return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST );
+			else { 	//horaire non disponible dans zimbra	
+				String messZimbr=MessageError.messageNotFoundOrEmpty("horaire non disponible",HttpStatus.NOT_FOUND.value());
+				return new ResponseEntity<>(MessageError,HttpStatus.BAD_REQUEST );
+			}
 		}
 		catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			DoctolibSServiceExceptionResponse ErrorMessage= new DoctolibSServiceExceptionResponse("Don't create Appointement", e.toString());
+			return new ResponseEntity<>(ErrorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
@@ -239,6 +296,7 @@ public class AppointementController {
 
 	@ApiOperation(value = "delete an appointement by id ")
 	@DeleteMapping("/appointements/{id}")
+	@ResponseBody
 
 	public ResponseEntity<String> deleteAppointementById(@PathVariable("id") long id) {
 		Optional<Appointement> appointementToDelete = appointementDao.findById(id);
