@@ -7,7 +7,7 @@ public class DoctolibSServiceExceptionResponse {
 	
 	private String message;
 	private int codeError;
-	private String exception;
+	private String exception="";
 	
 	/*Constructors*/
 	
@@ -39,9 +39,6 @@ public class DoctolibSServiceExceptionResponse {
 	
 	/**/
 	
-	public String messageNotFoundOrEmpty(String message, int exeptionResponse) {
-		return  message +exeptionResponse ;
-	}
 
 
 		/*Getters & Setters*/

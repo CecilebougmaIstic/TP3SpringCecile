@@ -129,7 +129,7 @@ public class RestClientZimbra {
 	        
 	}
 	
-	private static long convertToLong(String date) 
+	public static long convertToLong(String date) 
 	{
 		
 		return Long.parseLong(date.replace(" ", "").replace(":", "").replace("-", "").replace("T", ""));

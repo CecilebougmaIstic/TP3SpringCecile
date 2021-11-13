@@ -2,7 +2,9 @@ package doctolib_service.data.jpa.web;
 
 import java.text.DateFormat;
 import java.text.Format;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -97,7 +99,7 @@ public class AppointementController {
 			if(appointements.isEmpty()) 
 			{
 				//throw  new ResponseStatusException(HttpStatus.NOT_FOUND);
-			String appointementEmptyMess= MessageError.messageNotFoundOrEmpty("No appointements", HttpStatus.NOT_FOUND.value());
+			DoctolibSServiceExceptionResponse appointementEmptyMess= new DoctolibSServiceExceptionResponse("No appointements", HttpStatus.NOT_FOUND.value());
 				return new ResponseEntity<>(appointementEmptyMess,HttpStatus.NOT_FOUND);
 			}
 
@@ -178,14 +180,14 @@ public class AppointementController {
 		Worker workerData=null;
 		Customer custumerData = null;
 		TypeOfAppointement typeOfApppointementData =null;
-		DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse();
+		Date appointementEndFinal =new Date();
+		//DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse();
 		
 		/*Verify if a Customer exists*/
 		Optional<Customer> _customer=customerDao.findById(appointement.getCustomer().getId());
 		
 		if(!_customer.isPresent()) {
-		
-			String Message=MessageError.messageNotFoundOrEmpty("This Customer doesn't exist",HttpStatus.NOT_FOUND.value());
+			DoctolibSServiceExceptionResponse Message= new DoctolibSServiceExceptionResponse("This Customer doesn't exist",HttpStatus.NOT_FOUND.value());
 			//return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST );
 			return new ResponseEntity<>(Message,HttpStatus.BAD_REQUEST );
 
@@ -196,33 +198,24 @@ public class AppointementController {
 		Optional<Worker> _worker=workerDao.findById(appointement.getWorker().getId());
 		
 		if(!_worker.isPresent()) {
-		
-			String Message=MessageError.messageNotFoundOrEmpty("This Worker doesn't exist",HttpStatus.NOT_FOUND.value());
+			DoctolibSServiceExceptionResponse message= new DoctolibSServiceExceptionResponse("This Worker doesn't exist",HttpStatus.NOT_FOUND.value());
 			//return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST );
-			return new ResponseEntity<>(Message,HttpStatus.BAD_REQUEST );
+			return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST );
 
 		}else
 			workerData=_worker.get();
 		
 		/*Verify if a TypeOfAppointement exists*/
-		Optional<TypeOfAppointement> _typeOfApppointement=typeOfApppointementDao.findById(appointement.getCustomer().getId());
+		Optional<TypeOfAppointement> _typeOfApppointement=typeOfApppointementDao.findById(appointement.getTypeAppointement().getId());
 		
 		if(!_typeOfApppointement.isPresent()) {
-		
-			String Message=MessageError.messageNotFoundOrEmpty("This kind of typeOfApppointement doesn't exist",HttpStatus.NOT_FOUND.value());
+			DoctolibSServiceExceptionResponse MessageError1= new DoctolibSServiceExceptionResponse("This kind of typeOfApppointement doesn't exist",HttpStatus.NOT_FOUND.value());
 			//return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST );
-			return new ResponseEntity<>(Message,HttpStatus.BAD_REQUEST );
+			return new ResponseEntity<>(MessageError1,HttpStatus.BAD_REQUEST );
 
 		}else
 			typeOfApppointementData=_typeOfApppointement.get();
 		
-		
-		
-				/*Don't allowed to create an appointment in past*/
-		
-		/*************************************************************/
-		
-		/***************************/
 			/*Verify that this appointment is allow to registered*/
 		if(appointementDao.appointementAlreadyExistForAWorker(appointement.getAppointementStart(), appointement.getAppointementEnd(),appointement.getWorker().getId()).isPresent())
 		{
@@ -230,16 +223,68 @@ public class AppointementController {
 		}
 		
 		
+		
+			/*Don't allow to create an appointment in past*/
+		/*************************************************************/
+		 	//obtenir la date courante
+			Date dateCourante = new Date();
+			String StringDateCourante ="";
+			 String stringGetAppointementStart ="";
+	      try {
+	    	  DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+			  
+			   
+			   StringDateCourante = format.format(dateCourante);
+			   stringGetAppointementStart=format.format(appointement.getAppointementStart());
+			   
+			   System.out.println("gjjj"+stringGetAppointementStart);
+			   System.out.println(StringDateCourante);
+	       } catch (NumberFormatException e) {
+	          e.printStackTrace();
+	          System.out.println("NumberFormatException est traité");
+	          
+	       }
+	     
+		 
+		   /*Don't allow to create an appointment in past*/
+		   /*Conversion en long des date du jour et la date 
+		    * de début d'appointemnt
+		    * */
+		  long longGetAppointementStart = RestClientZimbra.convertToLong(stringGetAppointementStart);
+		  long dateDuJourLong = RestClientZimbra.convertToLong(StringDateCourante);
+		  if (longGetAppointementStart<dateDuJourLong) {
+			  DoctolibSServiceExceptionResponse dateOld= new DoctolibSServiceExceptionResponse("On ne peut pas réserver un rdv pour une date passée", HttpStatus.BAD_REQUEST.value());
+			  return new ResponseEntity<>(dateOld, HttpStatus.BAD_REQUEST);
+		  }else {
+			 
+				LocalDateTime dateAppointementEnd1 = convertToLocalDateTimeViaInstant(appointement.getAppointementStart()).plusMinutes(appointement.getTypeAppointement().getAppointementLimit());
+				String dateAppointementEnd = dateAppointementEnd1.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+				try {
+					 DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+					appointementEndFinal= format.parse(dateAppointementEnd);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+		  }
+		/***************************/	
+		
+		
 		/*Contrôle au niveau de Zimbra*/
 		LocalDateTime dateEnd = convertToLocalDateTimeViaInstant(appointement.getAppointementStart()).plusDays(1);
 		Format formatter = new SimpleDateFormat("yyyy-MM-dd");
 		String datePourZimbraStart = formatter.format(appointement.getAppointementStart());
 
-		String datePourZimbraEnd = dateEnd.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));;
+		String datePourZimbraEnd = dateEnd.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateAppointementStart = formatter.format(appointement.getAppointementStart());
 	
-		String dateAppointementEnd = formatter.format(appointement.getAppointementEnd());
+		//String dateAppointementEnd = formatter.format(appointement.getAppointementEnd());
+		
+	
+
+			String dateAppointementEnd = "";
 		
 		try {
 			//On récupère les rdv dans zimbra sur une tranche d'une journée par rapport (au jour) du rdv souhaité
@@ -262,8 +307,8 @@ public class AppointementController {
 
 			}
 			else { 	//horaire non disponible dans zimbra	
-				String messZimbr=MessageError.messageNotFoundOrEmpty("horaire non disponible",HttpStatus.NOT_FOUND.value());
-				return new ResponseEntity<>(MessageError,HttpStatus.BAD_REQUEST );
+				DoctolibSServiceExceptionResponse errorMessage= new DoctolibSServiceExceptionResponse("horaire non disponible", HttpStatus.NOT_FOUND.value());
+				return new ResponseEntity<>(errorMessage,HttpStatus.BAD_REQUEST );
 			}
 		}
 		catch (Exception e) {
@@ -309,6 +354,5 @@ public class AppointementController {
 		}
 	}
 
-
-
+	
 }
