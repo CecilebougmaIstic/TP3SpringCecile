@@ -56,7 +56,7 @@ public class WorkerControllerTest {
 	 
 	@Autowired
 	 //private WorkerController workerControllerTest;
-	 
+	
 	 @Before
 	    public void init() {
 
@@ -67,30 +67,18 @@ public class WorkerControllerTest {
 	       
 	        }
 
-	  //@Test
-	    public void testMethodeGetWorkerById() throws Exception {
-	        // when
-	        MockHttpServletResponse response = mvc.perform(
-	                get("/workers/{Id}", 1)
-	                        .accept(MediaType.APPLICATION_JSON))
-	                .andReturn().getResponse();
-
-	        // then
-	        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-	        //assertThat(response.getHeaders("X-SUPERHERO-APP")).containsOnly("super-header");
-	    }
-	    
+	  
 	
 	  @Test
 	  public void MethodeGetWorkerById_shouldReturnStatus200() throws Exception {
 		 
-		     mvc.perform(get("/api/workers/{Id}",1)
+		  MockHttpServletResponse response=     mvc.perform(get("/api/workers/{Id}",1)
 		       .accept(MediaType.APPLICATION_JSON))
 		       .andExpect(status().isOk())
 		       .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 		       .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L))
 		       .andReturn().getResponse();
-		        
+		     assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		      //verify(workerDaoForTest, atLeastOnce()).getWorkerById();
 		       //verifyNoMoreInteractions(workerDaoForTest);
 		     //assertEquals(1L,workerDaoForTest.findById(1L));
@@ -107,7 +95,7 @@ public class WorkerControllerTest {
 	      //  Worker optWorker3= new Worker(2L,"Sarah","SaralDupontnio","Gastonbadonnnjjjj@yahoo.fr",
 		    		// "12azzeee","MenuisierSoudeur","12assff");
 	        
-	        workerDaoForTest.saveAndFlush(optWorker1);
+	       
 	        //workerDaoForTest.save(optWorker1);
 	        System.out.println("--------------------------");
 	        //System.out.println(optWorker1.toString());
@@ -132,30 +120,16 @@ public class WorkerControllerTest {
 	       System.out.println("fgghjjkkll");
 	       //testing creating a worker
 	       List<Worker> found = workerDaoForTest.findAll();
-	       System.out.println(found);
+	     
 	       System.out.println("**************************");
 	       //assertThat(found).extracting(Worker::getFirstName).contains("Alexandrie");
-	       assertThat(found).extracting(Worker::getFirstName).containsOnly("Alexandrie");
+	       assertThat(found).extracting(Worker::getFirstName).contains("Alexandrie");
 	       //verify(workerDaoForTest, VerificationModeFactory.times(1)).
 	       //reset(workerDaoForTest);
 	        }
 	  
 	
-		    
-	 /*Create a Worker Data for tests*/ 
-	  
-
-	/*
-	 *  Worker optWorker =new Worker(1L,"Alexandrie","djopnk","Gastonbadonnnjjjj@yahoo.fr",
-		    		 "12azzeee","MenuisierSoudeur","12assff");
-	        
-	        
-	       Worker optWorker2=  new Worker(2L,"Alex","djopnk","Gastonbadonnnjjjj@yahoo.fr",
-		    		 "12azzeee","MenuisierSoudeur","12assff");
-	      Worker optWorker3=  new Worker(2L,"Sarah","SaralDupontnio","Gastonbadonnnjjjj@yahoo.fr",
-		    		 "12azzeee","MenuisierSoudeur","12assff");
-	       List<Worker> WorkerallWorkers = Arrays.asList(optWorker2, optWorker3, optWorker3);
-	       */  
+	
 	
 	  
 	 
