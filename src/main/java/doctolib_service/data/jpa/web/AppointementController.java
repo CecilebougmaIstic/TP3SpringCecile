@@ -89,7 +89,7 @@ public class AppointementController {
 			Optional<Worker> _worker=workerDao.findById(workerId);
 			if(_worker.isPresent()) {
 
-				appointementDao.findAppointementByWorkerId(workerId).forEach(appointements::add);;
+				appointementDao.findAppointementByWorkerId(workerId).forEach(appointements::add);
 			} else {
 				DoctolibSServiceExceptionResponse MessageError1= new DoctolibSServiceExceptionResponse("This Worker doesn't exist",HttpStatus.NOT_FOUND.value());
 				//String Message=MessageError.messageNotFoundOrEmpty("This Worker doesn't exist",HttpStatus.NOT_FOUND.value());
