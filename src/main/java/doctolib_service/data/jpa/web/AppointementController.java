@@ -244,14 +244,6 @@ public class AppointementController {
 		  }else {
 			 
 				 appointementEndFinal = appointement.getAppointementStart().plusMinutes(appointement.getTypeAppointement().getAppointementLimit());
-				/*String dateAppointementEnd = dateAppointementEnd1.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-				try {
-					 DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-					appointementEndFinal= format.parse(dateAppointementEnd);
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
 				
 		  }
 		/***************************/	
