@@ -1,5 +1,6 @@
 package doctolib_service.data.jpa.dao;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,6 @@ public List<Appointement> findByCustomer(Customer customerObject);
 		+"(a.appointementEnd BETWEEN :appointementStart AND :appointementEnd))"
 		+ "and a.worker.id=:workerId")
 //"select a from Appointement a where a.appointementStart = :appointementStart and a.worker.id=:workerId"
-public Optional<Appointement> appointementAlreadyExistForAWorker(@Param("appointementStart") Date appointementStart, @Param("appointementEnd") Date appointementEnd, @Param("workerId") Long workerId);
+public Optional<Appointement> appointementAlreadyExistForAWorker(@Param("appointementStart") LocalDateTime appointementStart, @Param("appointementEnd") LocalDateTime appointementEnd, @Param("workerId") Long workerId);
 
 }
