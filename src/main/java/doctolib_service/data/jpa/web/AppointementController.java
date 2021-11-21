@@ -89,7 +89,7 @@ public class AppointementController {
 			Optional<Worker> _worker=workerDao.findById(workerId);
 			if(_worker.isPresent()) {
 
-				appointementDao.findAppointementByWorkerId(workerId).forEach(appointements::add);;
+				appointementDao.findAppointementByWorkerId(workerId).forEach(appointements::add);
 			} else {
 				DoctolibSServiceExceptionResponse MessageError1= new DoctolibSServiceExceptionResponse("This Worker doesn't exist",HttpStatus.NOT_FOUND.value());
 				//String Message=MessageError.messageNotFoundOrEmpty("This Worker doesn't exist",HttpStatus.NOT_FOUND.value());
@@ -176,11 +176,12 @@ public class AppointementController {
 	@PostMapping("/appointements")
 	@ResponseBody
 	public ResponseEntity<?> createAppointement(@RequestBody  Appointement appointement) {
+	
 		Appointement _appointement=null ;
 		Worker workerData=null;
-		Customer custumerData = null;
+		Customer custumerData;
 		TypeOfAppointement typeOfApppointementData =null;
-		Date appointementEndFinal =new Date();
+		LocalDateTime appointementEndFinal;
 		//DoctolibSServiceExceptionResponse MessageError= new DoctolibSServiceExceptionResponse();
 		
 		/*Verify if a Customer exists*/
@@ -221,70 +222,52 @@ public class AppointementController {
 		{
 			return new ResponseEntity<>("This appointement is not disponible",HttpStatus.BAD_REQUEST );
 		}
-		
+		 
 		
 		
 			/*Don't allow to create an appointment in past*/
 		/*************************************************************/
 		 	//obtenir la date courante
-			Date dateCourante = new Date();
-			String StringDateCourante ="";
-			 String stringGetAppointementStart ="";
-	      try {
-	    	  DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-			  
-			   
-			   StringDateCourante = format.format(dateCourante);
-			   stringGetAppointementStart=format.format(appointement.getAppointementStart());
-			   
-			   System.out.println("gjjj"+stringGetAppointementStart);
-			   System.out.println(StringDateCourante);
-	       } catch (NumberFormatException e) {
-	          e.printStackTrace();
-	          System.out.println("NumberFormatException est traité");
-	          
-	       }
-	     
-		 
+		LocalDateTime dateCourante = LocalDateTime.now();
+	
 		   /*Don't allow to create an appointment in past*/
 		   /*Conversion en long des date du jour et la date 
 		    * de début d'appointemnt
 		    * */
-		  long longGetAppointementStart = RestClientZimbra.convertToLong(stringGetAppointementStart);
-		  long dateDuJourLong = RestClientZimbra.convertToLong(StringDateCourante);
-		  if (longGetAppointementStart<dateDuJourLong) {
+	
+
+		 // System.out.println("*********************dateDuJourLong*****************"+dateDuJourLong);
+		  if (appointement.getAppointementStart().isBefore(dateCourante)) {
 			  DoctolibSServiceExceptionResponse dateOld= new DoctolibSServiceExceptionResponse("On ne peut pas réserver un rdv pour une date passée", HttpStatus.BAD_REQUEST.value());
 			  return new ResponseEntity<>(dateOld, HttpStatus.BAD_REQUEST);
+		 
 		  }else {
 			 
-				LocalDateTime dateAppointementEnd1 = convertToLocalDateTimeViaInstant(appointement.getAppointementStart()).plusMinutes(appointement.getTypeAppointement().getAppointementLimit());
-				String dateAppointementEnd = dateAppointementEnd1.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+				 appointementEndFinal = appointement.getAppointementStart().plusMinutes(appointement.getTypeAppointement().getAppointementLimit());
+				/*String dateAppointementEnd = dateAppointementEnd1.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 				try {
 					 DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 					appointementEndFinal= format.parse(dateAppointementEnd);
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				}*/
 				
 		  }
 		/***************************/	
 		
 		
 		/*Contrôle au niveau de Zimbra*/
-		LocalDateTime dateEnd = convertToLocalDateTimeViaInstant(appointement.getAppointementStart()).plusDays(1);
-		Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+		LocalDateTime dateEnd = appointement.getAppointementStart().plusDays(1);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String datePourZimbraStart = formatter.format(appointement.getAppointementStart());
 
-		String datePourZimbraEnd = dateEnd.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String dateAppointementStart = formatter.format(appointement.getAppointementStart());
+		String datePourZimbraEnd = formatter.format(dateEnd);
+				//dateEnd.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 	
 		//String dateAppointementEnd = formatter.format(appointement.getAppointementEnd());
-		
-	
 
-			String dateAppointementEnd = "";
+			
 		
 		try {
 			//On récupère les rdv dans zimbra sur une tranche d'une journée par rapport (au jour) du rdv souhaité
@@ -294,13 +277,14 @@ public class AppointementController {
 			//s'il existe des rdv dans zimbra pour ce jour là
 			if(!json.equals("{}")) {
 				//vérifier que les horaires sont disponibles
-				
+				formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+				String dateAppointementStart = formatter.format(appointement.getAppointementStart());
+				String dateAppointementEnd = formatter.format(appointementEndFinal); 
 				accept=RestClientZimbra.acceptReservation(json,dateAppointementStart,dateAppointementEnd);
 			}else
 				accept=true;
 			//si horaire disponible
 			if(accept==true) {
-				
 				_appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementEnd(),
 						appointement.getAppointementPlace(),appointement.getTypeAppointement(), appointement.getCustomer(),appointement.getWorker()));
 				return new ResponseEntity<>(_appointement, HttpStatus.CREATED);

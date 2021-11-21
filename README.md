@@ -11,18 +11,28 @@ On souhaite développer l'application suivante de type prise de RDV pour tout pr
 Un utilisateur souhaitant consulter un professionnel pourra aussi se créer un compte, se loguer et consulter la liste des créneaux disponibles et réserver un créneau.
 
 Prenez la liberté de compléter ce modèle métier au maximum en s’inspirant d’application de tableau de kanban existant. 
+		I-Diagramme UML
 
 
-
-		I- Quick Start
+		II- Quick Start
+		
+1- Récupérer le projet sur le Github par une commande git clone 
+	url: https://github.com/CecilebougmaIstic/TP3SpringCecile.git
+2- En ligne de commande, démarrr le contener pour la base de données:
+	sudo docker start some-mysql myadmin
+3-Sur un browser ouvrir PHPMyAdmin à l'adresse ip: http://localhost:8082
+	 utilisateur root, password my-secret-pw
+4-Pour lancer l'application:
+	pakage doctolib_service.data.jpa, click droit sur la classe SampleDataJpaApplication et sélectionner run as java application.
+5 -Pour effectuer les tests des Api, se connecter à Swagger à l'Url:
+	http://localhost:8080/swagger-ui.html
+Veuillez consulter la section partie Swagger ci -dessous ( III Description du projet) pour prendre connaissances de certains spécificités à effectuer sur les données générées par Swagger avant d'executer sur Swagger.
 		
 		
 		
 		
 		
-		
-		
-		II- Description du Projet
+		III- Description du Projet
 
 
 # partie Gestion des Exeptions

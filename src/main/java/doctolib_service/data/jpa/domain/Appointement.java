@@ -1,7 +1,6 @@
 package doctolib_service.data.jpa.domain;
 import java.io.Serializable;
-import java.util.Date;
-
+import java.time.LocalDateTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
@@ -27,12 +26,12 @@ public class Appointement implements Serializable{
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
-	//@JsonSerialize(using = CustomLocalDateTimeSerializer.class)
+	//@JsonSerialize(using = CustomLocalLocalDateTimeTimeSerializer.class)
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private Date appointementStart;
-	//@JsonSerialize(using = CustomLocalDateTimeSerializer.class)
+	private LocalDateTime appointementStart;
+	//@JsonSerialize(using = CustomLocalLocalDateTimeTimeSerializer.class)
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private Date appointementEnd;
+	private LocalDateTime appointementEnd;
 	
 	private String appointementPlace;
 	
@@ -56,7 +55,7 @@ public class Appointement implements Serializable{
 	public Appointement() {
 		super();
 	}
-	public Appointement(long id, Date appointementStart, Date appointementEnd, String appointementPlace,
+	public Appointement(long id, LocalDateTime appointementStart, LocalDateTime appointementEnd, String appointementPlace,
 			TypeOfAppointement typeAppointement, Customer customer, Worker worker) {
 		super();
 		this.id = id;
@@ -76,19 +75,19 @@ public class Appointement implements Serializable{
 		this.id = id;
 	}
 
-	public Date getAppointementStart() {
+	public LocalDateTime getAppointementStart() {
 		return appointementStart;
 	}
 
-	public void setAppointementStart(Date appointementStart) {
+	public void setAppointementStart(LocalDateTime appointementStart) {
 		this.appointementStart = appointementStart;
 	}
 
-	public Date getAppointementEnd() {
+	public LocalDateTime getAppointementEnd() {
 		return appointementEnd;
 	}
 
-	public void setAppointementEnd(Date appointementEnd) {
+	public void setAppointementEnd(LocalDateTime appointementEnd) {
 		this.appointementEnd = appointementEnd;
 	}
 
