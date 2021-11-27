@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Inheritance(strategy=InheritanceType.JOINED)
 @DiscriminatorColumn(name="User_type")
 @Table
-public  class User implements Serializable{
+public  abstract class User implements Serializable{
 	
 	/*Variables*/
     @Id
@@ -89,8 +89,5 @@ public  class User implements Serializable{
 		this.password = password;
 	}
 	
-	
-	
-
 	
 }

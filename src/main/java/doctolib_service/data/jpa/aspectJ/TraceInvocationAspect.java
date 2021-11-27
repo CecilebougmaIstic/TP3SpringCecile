@@ -15,28 +15,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-
-
-
-
 @Aspect
 @Component
 
 public class TraceInvocationAspect {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());	//private  Logger logger = Logger.getLogger(TraceInvocationAspect.class);
-	//private int order; 
-		//What kind of method calls I would intercept
-	//execution(* PACKAGE.*.*(..))
-	//Weaving & Weaver
-	//@Before
 
 	  @Pointcut("execution(* doctolib_service..*Controller.*(..))")
 	  public void methodLog() {}
-
-
-//What kind of method calls I would intercept
-//execution(* PACKAGE.*.*(..))
-//Weaving & Weaver
 	
 
 	  @Before("methodLog()")
@@ -56,11 +42,7 @@ public void before(JoinPoint joinPoint){
 		                      joinPoint.toShortString(),
 		                      e.getClass().getSimpleName());
 		  }
-		
-	 
-	 
-	
-	
+			
 	
 }
 

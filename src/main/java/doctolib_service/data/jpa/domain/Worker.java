@@ -53,7 +53,6 @@ public class Worker extends User implements Serializable{
 
 	}
 
-
 	/*Constructor*/
 	public Worker(long id, String job, String bakRib) {
 		super();
@@ -62,7 +61,6 @@ public class Worker extends User implements Serializable{
 		this.bakRib = bakRib;
 
 	}
-
 
 	public Worker(String firstName, String lastName, String email, String password,String job, String bakRib) {
 		super();
@@ -137,23 +135,11 @@ public class Worker extends User implements Serializable{
 		this.appointements = app;
 	}
 
-
-
-
-
 	@Override
 	public String toString() {
 		return "Worker [id=" + id + ", job=" + job + ", bakRib=" + bakRib + ", typeAppointements="
 				+ typeAppointements + ", appointements=" + appointements + "]";
 	}
-
-
-
-
-
-
-
-
 
 
 }

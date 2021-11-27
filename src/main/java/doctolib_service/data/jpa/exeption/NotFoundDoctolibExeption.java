@@ -11,13 +11,10 @@ public class NotFoundDoctolibExeption extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	private String messagePersonalise;
 	
-
 	public NotFoundDoctolibExeption() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
-
 
 	public NotFoundDoctolibExeption(String message) {
 		super(message);
@@ -31,17 +28,13 @@ public class NotFoundDoctolibExeption extends RuntimeException {
 	}
 
 
-
 	public String getMessagePersonalise() {
 		return messagePersonalise;
 	}
-
-
 
 	public void setMessagePersonalise(String messagePersonalise) {
 		this.messagePersonalise = messagePersonalise;
 	}
 
-	
 
 }

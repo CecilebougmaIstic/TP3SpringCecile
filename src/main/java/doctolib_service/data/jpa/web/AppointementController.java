@@ -259,8 +259,6 @@ public class AppointementController {
 	
 		//String dateAppointementEnd = formatter.format(appointement.getAppointementEnd());
 
-			
-		
 		try {
 			//On récupère les rdv dans zimbra sur une tranche d'une journée par rapport (au jour) du rdv souhaité
 			String json=RestClientZimbra.connexionApiZimbra(workerData.getEmail(), workerData.getPassword(),datePourZimbraStart,datePourZimbraEnd);
@@ -303,10 +301,11 @@ public class AppointementController {
 	@ApiOperation(value = "delete all appointements ")
 	@DeleteMapping("/appointements")
 	@ResponseBody
-	public ResponseEntity<String> deleteAllAppointement() {
+	public ResponseEntity<?> deleteAllAppointement() {
 		try {
 			appointementDao.deleteAll();
-			return new ResponseEntity<>(" succesfully deleted!",HttpStatus.NO_CONTENT);
+			DoctolibSServiceExceptionResponse error= new DoctolibSServiceExceptionResponse(" succesfully deleted!");
+			return new ResponseEntity<>(error,HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
 			return new ResponseEntity<>("Error deleting the appointement:" + e.toString(),HttpStatus.INTERNAL_SERVER_ERROR);
 		}

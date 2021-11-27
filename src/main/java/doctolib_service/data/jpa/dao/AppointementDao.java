@@ -33,7 +33,7 @@ public List<Appointement> findByCustomer(Customer customerObject);
 		+ "((a.appointementStart BETWEEN :appointementStart AND :appointementEnd) OR"
 		+"(a.appointementEnd BETWEEN :appointementStart AND :appointementEnd))"
 		+ "and a.worker.id=:workerId")
-//"select a from Appointement a where a.appointementStart = :appointementStart and a.worker.id=:workerId"
+
 public Optional<Appointement> appointementAlreadyExistForAWorker(@Param("appointementStart") LocalDateTime appointementStart, @Param("appointementEnd") LocalDateTime appointementEnd, @Param("workerId") Long workerId);
 
 }
