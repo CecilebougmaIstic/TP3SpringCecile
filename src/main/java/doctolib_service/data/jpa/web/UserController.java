@@ -28,7 +28,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/api")
 public abstract class UserController {
-	//It ' a absstract class
+	//It ' a abstract class
 }
 	
 
