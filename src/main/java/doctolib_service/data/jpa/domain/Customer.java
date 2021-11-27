@@ -61,7 +61,6 @@ public class Customer extends User implements Serializable{
 	}
 
 
-
 	/*Getters && Setters*/
 
 
@@ -90,9 +89,6 @@ public class Customer extends User implements Serializable{
 	public String toString() {
 		return "Customer [id=" + id + ", bankCard=" + bankCard + ", appointement=" + appointement + "]";
 	}
-
-
-
 
 
 }

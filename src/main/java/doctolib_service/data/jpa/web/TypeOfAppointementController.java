@@ -120,10 +120,6 @@ public class TypeOfAppointementController {
 		}else
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	
-			
-		
-		// return idWorker + " "+ "Worker succesfully updated!";
-		//return  id + " " + "succesfully updated!";
 		
 	}
 
@@ -144,9 +140,7 @@ public class TypeOfAppointementController {
 		}			
 	}
 	
-			
-	
-	
+				
 	
 	/* Delete all TypeOfAppointements */
 	@ApiOperation(value = "Delete allTypeOfAppointement by id ")

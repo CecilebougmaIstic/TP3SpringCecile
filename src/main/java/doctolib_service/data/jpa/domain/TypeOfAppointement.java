@@ -24,8 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 public class TypeOfAppointement implements Serializable{
-	
-	
+		
 	/*Variables*/
 	 @Id
 	  @GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,11 +43,6 @@ public class TypeOfAppointement implements Serializable{
 	@JsonBackReference(value="appointement-typeAppointement")
 	private List<Appointement> appointement = new ArrayList<Appointement>();	
 	
-	
-	
-	
-
-
 	/*Constructors*/
 	public TypeOfAppointement() {
 		super();
@@ -119,9 +113,5 @@ public class TypeOfAppointement implements Serializable{
 				+ "]";
 	}
 	
-	
-	
-	
-	
-	
+		
 }

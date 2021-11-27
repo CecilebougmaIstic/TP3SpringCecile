@@ -26,28 +26,20 @@ public class Appointement implements Serializable{
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
-	//@JsonSerialize(using = CustomLocalLocalDateTimeTimeSerializer.class)
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime appointementStart;
-	//@JsonSerialize(using = CustomLocalLocalDateTimeTimeSerializer.class)
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private LocalDateTime appointementEnd;
-	
+	private LocalDateTime appointementEnd;	
 	private String appointementPlace;
-	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="typeAppointement_id", nullable=false)
-	//@JsonManagedReference(value="appointement-typeAppointement")
-	private TypeOfAppointement typeAppointement;
-	
+	private TypeOfAppointement typeAppointement;	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="customer_id", nullable=false)
-	//@JsonManagedReference(value="customer-appointement")
 	private Customer customer;	
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="worker_id", nullable=false)
-	//@JsonManagedReference(value="worker-appointement")
 	private Worker worker;
 	
 	/*Construtors*/	

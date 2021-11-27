@@ -11,7 +11,6 @@ import doctolib_service.data.jpa.domain.User;
 
 public interface UserDao extends JpaRepository <User, Long> {
 
-	//public  User findById(long id);
 	public  User findByEmail(String email);
 
 	public List<User> findByEmailContaining(String email);
@@ -22,7 +21,6 @@ public interface UserDao extends JpaRepository <User, Long> {
 
 	public List<User> findByLastNameContainingAndFirstNameContaining(String lastName, String firstName);
 
-	//public User findOne(User user);
 	
 		
 
