@@ -11,21 +11,29 @@ On souhaite développer l'application suivante de type prise de RDV pour tout pr
 Un utilisateur souhaitant consulter un professionnel pourra aussi se créer un compte, se loguer et consulter la liste des créneaux disponibles et réserver un créneau.
 
 Prenez la liberté de compléter ce modèle métier au maximum en s’inspirant d’application de tableau de kanban existant. 
+
 		I-Diagramme UML
 
-VEuillez consulter, svp, le diagramme de classe
+Veuillez consulter, svp, le diagramme de classe présent sur le dépôt GitHub de ce projet (url: https://github.com/CecilebougmaIstic/TP3SpringCecile.git).
+
+![Alt text](relative/path/to/img.jpg?raw=true "Title")
 		II- Quick Start
 		
 1- Récupérer le projet sur le Github par une commande git clone 
 	url: https://github.com/CecilebougmaIstic/TP3SpringCecile.git
+	
 2- En ligne de commande, démarer le contener pour la base de données:
 	sudo docker start some-mysql myadmin
+	
 3-Sur un browser ouvrir PHPMyAdmin à l'adresse ip: http://localhost:8082
 	 utilisateur root, password my-secret-pw
+	 
 4-Pour lancer l'application:
 	pakage doctolib_service.data.jpa, click droit sur la classe SampleDataJpaApplication et sélectionner run as java application.
+	
 5 -Pour effectuer les tests des Api, se connecter à Swagger à l'Url:
 	http://localhost:8080/swagger-ui.html
+	
 Veuillez consulter la section partie Swagger ci -dessous ( III Description du projet) pour prendre connaissances de certains spécificités à effectuer sur les données générées par Swagger avant d'executer sur Swagger.
 		
 		
@@ -36,10 +44,13 @@ Veuillez consulter la section partie Swagger ci -dessous ( III Description du pr
 		
 # partie Swagger 
 
-Une fois que l'application DoctolibService run, se rendre à l'adresse URL http://localhost:8080/swagger-ui.html et effectuer des tests sur
-les différentes API de l'application à partir des données générées par Swagger. Attention!!!:
-	Pour les données de date, il faut les mettre au format attendu:
+Une fois que le back-end de l'application DoctolibService run, se rendre à l'adresse URL http://localhost:8080/swagger-ui.html et effectuer des tests sur les différentes API de l'application à partir des données générées par Swagger.
+		Attention!!!:
+		
+Pour les données de date, il faut les mettre au format attendu:
+
 		supprimer la lettre T et les chiffre et lettes (.797Z) à la fin des données de date.
+		
 Par exemple:   "appointementEnd": "2021-11-21T11:56:06.797Z", (généré par Swagger) devient   "appointementEnd": "2021-11-21 11:56:06",
 
 Jeu de données pour poster un appointement (un rendez-vous):
@@ -93,15 +104,8 @@ Pour récupérer les rdv d'un Worker à partir de son compte sur Zimbr, il faudr
  
 # partie Gestion des Exeptions
 
-Les exeptions ont été gérées par des messages String personnalisés passées en argument à la méthode ResponseEntity(). Le code de statut associé à l'exception est également retourné en argument de la méthode ResponseEntity().
-Exemple: return new ResponseEntity<>("Error deleting the user:" + e.toString(),HttpStatus.INTERNAL_SERVER_ERROR);
-Nous avons également décid de gérer le message d'erreur affiché lorqu'un de nos entités est introuvable. Par exemple si un Customer n'existe pas.Le pakage doctolib_service.data.jpa.exeption a été créé, dans lequel, dans classe nommée NotFoundDoctolibExeption.java, nous avons personnalisé le retour de message d'erreur 500 Internal Server Error pour le cas où une ressource cherchée est introuvable; le code 404 Not Found, correspondant est retourné. Nous avons placé l'annotation 
-@ResponseStatus(HttpStatus.NOT_FOUND) au dessus de la classe .java.
-De même la classe AlreadyExistDoctolibExeption permet de générer un message qui informa à un customer qu'un RDV est déjà résevé.
-
------OU
-Dans le package doctolib_service.data.jpa.exeption, des classes de type exception ont permis de gérer dans les différentes lévés d'exception de cette application. La classe nommée DoctolibSServiceExceptionResponse a permit de créer des messages personnalisés d'ereurs.
-Au niveau des différentes classes (xxControler) du package doctolib_service.data.jpa.web, on nte des méthodes dont le type de retour est de type ResponseEntity, et d'autres méthodes dont le type de retour  DoctolibSServiceExceptionResponse. Dans une première version, seul le type de retour ResponseEntity a été utilisé dans le package doctolib_service.data.jpa.web. Puis dans les Versions ultérieures de l'application, où le package doctolib_service.data.jpa.exeption a été développé, certaines méthodes dans les classes du  package doctolib_service.data.jpa.web ont été réfactorées afin de retourner un type de réponse de type DoctolibSServiceExceptionResponse.
+Dans le package doctolib_service.data.jpa.exeption, des classes de type exception ont permis de gérer dans les différentes lévées d'exception de cette application. La classe nommée DoctolibSServiceExceptionResponse a permit de créer des messages personnalisés d'ereurs.
+Au niveau des différentes classes (xxControler) du package doctolib_service.data.jpa.web, on note des méthodes dont le type de retour est de type ResponseEntity, et d'autres méthodes dont le type de retour  DoctolibSServiceExceptionResponse. Dans une première version, seul le type de retour ResponseEntity a été utilisé dans le package doctolib_service.data.jpa.web. Puis dans les Versions ultérieures de l'application, où le package doctolib_service.data.jpa.exeption a été développé, certaines méthodes dans les classes du  package doctolib_service.data.jpa.web ont été réfactorées afin de retourner un type de réponse de type DoctolibSServiceExceptionResponse.
 
 
 # partie Spring AOP
