@@ -244,14 +244,6 @@ public class AppointementController {
 		  }else {
 			 
 				 appointementEndFinal = appointement.getAppointementStart().plusMinutes(appointement.getTypeAppointement().getAppointementLimit());
-				/*String dateAppointementEnd = dateAppointementEnd1.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-				try {
-					 DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-					appointementEndFinal= format.parse(dateAppointementEnd);
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
 				
 		  }
 		/***************************/	
@@ -266,7 +258,7 @@ public class AppointementController {
 				//dateEnd.toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 	
 		//String dateAppointementEnd = formatter.format(appointement.getAppointementEnd());
-
+		//LocalDateTime dateAppointementEnd1;
 		try {
 			//On récupère les rdv dans zimbra sur une tranche d'une journée par rapport (au jour) du rdv souhaité
 			String json=RestClientZimbra.connexionApiZimbra(workerData.getEmail(), workerData.getPassword(),datePourZimbraStart,datePourZimbraEnd);
@@ -279,11 +271,25 @@ public class AppointementController {
 				String dateAppointementStart = formatter.format(appointement.getAppointementStart());
 				String dateAppointementEnd = formatter.format(appointementEndFinal); 
 				accept=RestClientZimbra.acceptReservation(json,dateAppointementStart,dateAppointementEnd);
+				
 			}else
 				accept=true;
+		
 			//si horaire disponible
 			if(accept==true) {
-				_appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementEnd(),
+				LocalDateTime DateEnd = appointement.getAppointementStart().plusMinutes(appointement.getTypeAppointement().getAppointementLimit());
+			///////////////////////////////////////////////
+				LocalDateTime DateStart = appointement.getAppointementStart();
+				LocalDateTime DateStartPlus30 = appointement.getAppointementStart().plusMinutes(appointement.getTypeAppointement().getAppointementLimit());
+				int minute =appointement.getTypeAppointement().getAppointementLimit();
+			/********************/
+				System.out.println("------------------------le nombre de minute" + minute);
+				System.out.println("**********DateStartPlus30*********"+ DateStartPlus30);
+				System.out.println("*********************endDate" + DateEnd);
+				
+				
+				/////////////////////////////////////////
+				_appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementStart().plusMinutes(30),
 						appointement.getAppointementPlace(),appointement.getTypeAppointement(), appointement.getCustomer(),appointement.getWorker()));
 				return new ResponseEntity<>(_appointement, HttpStatus.CREATED);
 
