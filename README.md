@@ -13,12 +13,12 @@ Un utilisateur souhaitant consulter un professionnel pourra aussi se créer un c
 Prenez la liberté de compléter ce modèle métier au maximum en s’inspirant d’application de tableau de kanban existant. 
 		I-Diagramme UML
 
-
+VEuillez consulter, svp, le diagramme de classe
 		II- Quick Start
 		
 1- Récupérer le projet sur le Github par une commande git clone 
 	url: https://github.com/CecilebougmaIstic/TP3SpringCecile.git
-2- En ligne de commande, démarrr le contener pour la base de données:
+2- En ligne de commande, démarer le contener pour la base de données:
 	sudo docker start some-mysql myadmin
 3-Sur un browser ouvrir PHPMyAdmin à l'adresse ip: http://localhost:8082
 	 utilisateur root, password my-secret-pw
@@ -33,8 +33,64 @@ Veuillez consulter la section partie Swagger ci -dessous ( III Description du pr
 		
 		
 		III- Description du Projet
+		
+# partie Swagger 
 
+Une fois que l'application DoctolibService run, se rendre à l'adresse URL http://localhost:8080/swagger-ui.html et effectuer des tests sur
+les différentes API de l'application à partir des données générées par Swagger. Attention!!!:
+	Pour les données de date, il faut les mettre au format attendu:
+		supprimer la lettre T et les chiffre et lettes (.797Z) à la fin des données de date.
+Par exemple:   "appointementEnd": "2021-11-21T11:56:06.797Z", (généré par Swagger) devient   "appointementEnd": "2021-11-21 11:56:06",
 
+Jeu de données pour poster un appointement (un rendez-vous):
+	{
+	"appointementStart":"2021-11-24T12:03:41.568Z,
+
+	"appointementPlace":"10 Rue de Baeauregard, 35000",
+	"typeAppointement": {
+		"id": 5
+    
+	},
+    "customer":  {
+        "id": 3
+      
+    }
+    ,
+      "worker":  {
+        "id": 12
+      
+    }
+}
+	retourne une  "error": "Bad Request",
+  "message": "JSON parse error: Illegal unquoted character ((CTRL-CHAR, code 10)): has to be escaped using backslash to be included in string value; 
+  
+Par contre ce jeu de données retourne un code 201
+	{	"appointementStart":"2021-11-24 15:00:00",
+
+	"appointementPlace":"8 Rue de Baeauregard, 35000",
+	"typeAppointement": {
+		"id": 5
+    
+	},
+    "customer":  {
+        "id": 3
+      
+    }
+    ,
+      "worker":  {
+        "id": 12
+      
+    }
+}
+
+# partie Connexion à l'API Zimbra
+
+Pour récupérer les rdv d'un Worker à partir de son compte sur Zimbr, il faudrait:
+1- Créer un compte pour ce utilisateur sur le compte Zimbra de l'Université de Rennes1 ou tout utilisateur ayant un compte sur Zimbra.
+ Exemple: cecile.bougma@etudiant.univ-rennes1.fr
+ 2- Créer ce utilisateur en tant que Worker dans la base de données doctolibServiceSpringB.
+ 
+ 
 # partie Gestion des Exeptions
 
 Les exeptions ont été gérées par des messages String personnalisés passées en argument à la méthode ResponseEntity(). Le code de statut associé à l'exception est également retourné en argument de la méthode ResponseEntity().
@@ -51,17 +107,17 @@ Au niveau des différentes classes (xxControler) du package doctolib_service.dat
 # partie Spring AOP
 
 L'implémentattion de Aspect J dans le projet est géré au niveau du package doctolib_service.data.jpa.aspectJ.
-un aspect de logging(Classe TraceInvocationAspect.java) et un système de supervision des performances de notre application.
+Un aspect de logging(Classe TraceInvocationAspect.java) et un système de supervision des performances de notre application.
 La Classe TraceInvocationAspect.java grâce à 1 @pointcut, une méthode annotée avec @Pointcut (@Pointcut("execution(* doctolib_service..*Controller.*(..))") public void methodLog() {}) permet tracer les appels aux méthodes de toutes les classes dont le nom se termine par Controller et situées dans le package doctolib_service.
 Le greffon (advice) @Before s’applique avant l’appel à une méthode et le greffon avec l’annotation @AfterThrowing est exécuté uniquement si la méthode se termine par une exception.
 Pour tracer des alertes lorsque l’exécution de certaines méthodes dure trop longtemps. Nous avons définit l’annotation @Supervision avec l’attribut dureeMillis qui permet de préciser la durée maximale d’exécution en millisecondes. Pour plus de détails voir les classe d'interface Supervision.java et la classe MonitorePerfAspect.java. l'anntation @Around permet de définir un greffon qui doit envelopper l’appel à une méthode. La coupe est définie par :"@annotation(supervision)".Cette déclaration se lit : lors de l’appel à une méthode qui porte l’annotation donnée par supervision. Ce dernier correspond au paramètre du même nom de la méthode et qui est du type Supervision. Donc ce greffon concerne l’appel à toutes les méthodes annotées avec @Supervision. Exemple voir dans la classe AppointementController au dessus de la métode getAllAppointementsOfCustomer().
 un ordre d'exécution des 2 aspects a été implémenté.
 
-# partie Connexion à l'API Zimbra
 
-Pour récupérer les rdv d'un Worker à partir de son compte sur Zimbr, il faudrait:
-1- Créer un compte pour ce utilisateur sur le compte Zimbra de l'Université de Rennes1 ou tout utilisateur ayant un compte sur Zimbra.
- Exemple: cecile.bougma@etudiant.univ-rennes1.fr
- 2- Créer ce utilisateur en tant que Worker dans la base de données doctolibServiceSpringB.
+# partie test (package src/test/java)
+
+Pour cette partie, pour des raisons de temps, nous avons testé que la classe de controller de l'entité Worker. 3 méthodes de tests se trouvent
+ici: doctolib_service.data.jpa.test.controller/WorkerControllerTest.
+
 
 
