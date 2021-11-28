@@ -27,10 +27,10 @@ public class Appointement implements Serializable{
     @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private LocalDateTime appointementStart;
+	protected LocalDateTime appointementStart;
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-	private LocalDateTime appointementEnd;	
-	private String appointementPlace;
+	protected LocalDateTime appointementEnd;	
+	protected String appointementPlace;
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="typeAppointement_id", nullable=false)
 	private TypeOfAppointement typeAppointement;	

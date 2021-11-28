@@ -246,9 +246,7 @@ public class AppointementController {
 				 appointementEndFinal = appointement.getAppointementStart().plusMinutes(appointement.getTypeAppointement().getAppointementLimit());
 				
 		  }
-		/***************************/	
-		
-		
+			
 		/*Contrôle au niveau de Zimbra*/
 		LocalDateTime dateEnd = appointement.getAppointementStart().plusDays(1);
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -278,17 +276,7 @@ public class AppointementController {
 			//si horaire disponible
 			if(accept==true) {
 				LocalDateTime DateEnd = appointement.getAppointementStart().plusMinutes(appointement.getTypeAppointement().getAppointementLimit());
-			///////////////////////////////////////////////
-				LocalDateTime DateStart = appointement.getAppointementStart();
-				LocalDateTime DateStartPlus30 = appointement.getAppointementStart().plusMinutes(appointement.getTypeAppointement().getAppointementLimit());
-				int minute =appointement.getTypeAppointement().getAppointementLimit();
-			/********************/
-				System.out.println("------------------------le nombre de minute" + minute);
-				System.out.println("**********DateStartPlus30*********"+ DateStartPlus30);
-				System.out.println("*********************endDate" + DateEnd);
-				
-				
-				/////////////////////////////////////////
+
 				_appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementStart().plusMinutes(30),
 						appointement.getAppointementPlace(),appointement.getTypeAppointement(), appointement.getCustomer(),appointement.getWorker()));
 				return new ResponseEntity<>(_appointement, HttpStatus.CREATED);
@@ -305,11 +293,7 @@ public class AppointementController {
 		}
 	}
 	
-	public LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
-	    return dateToConvert.toInstant()
-	      .atZone(ZoneId.systemDefault())
-	      .toLocalDateTime();
-	}
+	
 
 	/*Delete all Appointments*/
 	@ApiOperation(value = "delete all appointements ")
