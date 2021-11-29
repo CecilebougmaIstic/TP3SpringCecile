@@ -16,7 +16,8 @@ Prenez la liberté de compléter ce modèle métier au maximum en s’inspirant 
 
 Veuillez consulter, svp, le diagramme de classe (Diagrame_Classe_DoctolibService) présent sur le dépôt GitHub de ce projet (url: https://github.com/CecilebougmaIstic/TP3SpringCecile.git).
 
-![Alt text](relative/path/to/img.jpg?raw=true "Diagrame_Classe_DoctolibService")
+![alt text](./Diagrame_Classe_DoctolibService.jpg)
+
 		II- Quick Start
 		
 1- Récupérer le projet sur le Github par une commande git clone 
