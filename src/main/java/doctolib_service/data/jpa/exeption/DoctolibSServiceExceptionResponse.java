@@ -1,8 +1,5 @@
 package doctolib_service.data.jpa.exeption;
 
-
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 public class DoctolibSServiceExceptionResponse {
 	
 	private String message;

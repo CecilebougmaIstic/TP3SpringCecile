@@ -1,17 +1,11 @@
 package doctolib_service.data.jpa.web;
 
-import java.text.DateFormat;
-import java.text.Format;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
 import doctolib_service.data.jpa.aspectJ.Supervision;
 import doctolib_service.data.jpa.dao.AppointementDao;
 import doctolib_service.data.jpa.dao.CustomerDao;
@@ -33,7 +28,6 @@ import doctolib_service.data.jpa.domain.Appointement;
 import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.TypeOfAppointement;
 import doctolib_service.data.jpa.domain.Worker;
-import doctolib_service.data.jpa.exeption.AlreadyExistDoctolibExeption;
 import doctolib_service.data.jpa.exeption.DoctolibSServiceExceptionResponse;
 import doctolib_service.data.jpa.exeption.NotFoundDoctolibExeption;
 import doctolib_service.data.jpa.utils.RestClientZimbra;
@@ -275,17 +269,7 @@ public class AppointementController {
 		
 			//si horaire disponible
 			if(accept==true) {
-				LocalDateTime DateEnd = appointement.getAppointementStart().plusMinutes(appointement.getTypeAppointement().getAppointementLimit());
-
-			///////////////////////////////////////////////
-				LocalDateTime DateStart = appointement.getAppointementStart();
-				LocalDateTime DateStartPlus30 = appointement.getAppointementStart().plusMinutes(appointement.getTypeAppointement().getAppointementLimit());
-				int minute =appointement.getTypeAppointement().getAppointementLimit();
-			
 				
-				
-				/////////////////////////////////////////
-
 				_appointement = appointementDao.save(new Appointement(0,appointement.getAppointementStart(),appointement.getAppointementStart().plusMinutes(30),
 						appointement.getAppointementPlace(),appointement.getTypeAppointement(), appointement.getCustomer(),appointement.getWorker()));
 				return new ResponseEntity<>(_appointement, HttpStatus.CREATED);
