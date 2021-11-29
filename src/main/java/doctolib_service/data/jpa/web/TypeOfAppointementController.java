@@ -20,9 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import doctolib_service.data.jpa.dao.TypeOfAppointementDao;
-import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.TypeOfAppointement;
-import doctolib_service.data.jpa.domain.Worker;
 import doctolib_service.data.jpa.exeption.NotFoundDoctolibExeption;
 import io.swagger.annotations.ApiOperation;
 

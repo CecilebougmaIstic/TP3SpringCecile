@@ -18,11 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import doctolib_service.data.jpa.aspectJ.Supervision;
 import doctolib_service.data.jpa.dao.WorkerDao;
-import doctolib_service.data.jpa.domain.Customer;
 import doctolib_service.data.jpa.domain.Worker;
 import doctolib_service.data.jpa.exeption.NotFoundDoctolibExeption;
 import io.swagger.annotations.ApiOperation;
